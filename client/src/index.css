@@ -1,51 +1,52 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --background: hsl(0, 0%, 100%);
-  --foreground: hsl(20, 14.3%, 4.1%);
-  --muted: hsl(60, 4.8%, 95.9%);
-  --muted-foreground: hsl(25, 5.3%, 44.7%);
-  --popover: hsl(0, 0%, 100%);
-  --popover-foreground: hsl(20, 14.3%, 4.1%);
-  --card: hsl(0, 0%, 100%);
-  --card-foreground: hsl(20, 14.3%, 4.1%);
-  --border: hsl(20, 5.9%, 90%);
-  --input: hsl(20, 5.9%, 90%);
-  --primary: hsl(207, 90%, 54%);
-  --primary-foreground: hsl(211, 100%, 99%);
-  --secondary: hsl(60, 4.8%, 95.9%);
-  --secondary-foreground: hsl(24, 9.8%, 10%);
-  --accent: hsl(60, 4.8%, 95.9%);
-  --accent-foreground: hsl(24, 9.8%, 10%);
-  --destructive: hsl(0, 84.2%, 60.2%);
-  --destructive-foreground: hsl(60, 9.1%, 97.8%);
-  --ring: hsl(20, 14.3%, 4.1%);
-  --radius: 0.5rem;
+  --background: hsl(45, 25%, 95%);
+  --foreground: hsl(20, 10%, 15%);
+  --muted: hsl(45, 15%, 90%);
+  --muted-foreground: hsl(20, 8%, 45%);
+  --popover: hsl(45, 25%, 97%);
+  --popover-foreground: hsl(20, 10%, 15%);
+  --card: hsl(45, 20%, 97%);
+  --card-foreground: hsl(20, 10%, 15%);
+  --border: hsl(45, 15%, 85%);
+  --input: hsl(45, 15%, 88%);
+  --primary: hsl(320, 65%, 65%);
+  --primary-foreground: hsl(0, 0%, 100%);
+  --secondary: hsl(45, 15%, 92%);
+  --secondary-foreground: hsl(20, 10%, 15%);
+  --accent: hsl(45, 15%, 92%);
+  --accent-foreground: hsl(20, 10%, 15%);
+  --destructive: hsl(0, 50%, 55%);
+  --destructive-foreground: hsl(0, 0%, 100%);
+  --ring: hsl(320, 65%, 65%);
+  --radius: 0.25rem;
 }
 
 .dark {
-  --background: hsl(240, 10%, 3.9%);
-  --foreground: hsl(0, 0%, 98%);
-  --muted: hsl(240, 3.7%, 15.9%);
-  --muted-foreground: hsl(240, 5%, 64.9%);
-  --popover: hsl(240, 10%, 3.9%);
-  --popover-foreground: hsl(0, 0%, 98%);
-  --card: hsl(240, 10%, 3.9%);
-  --card-foreground: hsl(0, 0%, 98%);
-  --border: hsl(240, 3.7%, 15.9%);
-  --input: hsl(240, 3.7%, 15.9%);
-  --primary: hsl(207, 90%, 54%);
-  --primary-foreground: hsl(211, 100%, 99%);
-  --secondary: hsl(240, 3.7%, 15.9%);
-  --secondary-foreground: hsl(0, 0%, 98%);
-  --accent: hsl(240, 3.7%, 15.9%);
-  --accent-foreground: hsl(0, 0%, 98%);
-  --destructive: hsl(0, 62.8%, 30.6%);
-  --destructive-foreground: hsl(0, 0%, 98%);
-  --ring: hsl(240, 4.9%, 83.9%);
-  --radius: 0.5rem;
+  --background: hsl(220, 15%, 8%);
+  --foreground: hsl(45, 15%, 95%);
+  --muted: hsl(220, 10%, 15%);
+  --muted-foreground: hsl(45, 10%, 65%);
+  --popover: hsl(220, 15%, 10%);
+  --popover-foreground: hsl(45, 15%, 95%);
+  --card: hsl(220, 15%, 10%);
+  --card-foreground: hsl(45, 15%, 95%);
+  --border: hsl(220, 10%, 20%);
+  --input: hsl(220, 10%, 18%);
+  --primary: hsl(320, 65%, 65%);
+  --primary-foreground: hsl(0, 0%, 100%);
+  --secondary: hsl(220, 10%, 18%);
+  --secondary-foreground: hsl(45, 15%, 95%);
+  --accent: hsl(220, 10%, 18%);
+  --accent-foreground: hsl(45, 15%, 95%);
+  --destructive: hsl(0, 50%, 55%);
+  --destructive-foreground: hsl(0, 0%, 100%);
+  --ring: hsl(320, 65%, 65%);
+  --radius: 0.25rem;
 }
 
 @layer base {
@@ -55,57 +56,35 @@
 
   body {
     @apply font-sans antialiased bg-background text-foreground;
+    background-image: 
+      linear-gradient(rgba(320, 65%, 65%, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(320, 65%, 65%, 0.05) 1px, transparent 1px);
+    background-size: 20px 20px;
   }
 }
 
-/* Timeline Chevron Styles */
+/* Timeline Chevron Styles - Simplified */
 .timeline-chevron {
-  clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 50%, calc(100% - 20px) 100%, 0 100%, 20px 50%);
+  clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 50%, calc(100% - 15px) 100%, 0 100%, 15px 50%);
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.timeline-chevron-first {
-  clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 50%, calc(100% - 20px) 100%, 0 100%);
-}
-
-/* Custom animations */
-@keyframes pulse {
+/* Minimal animations */
+@keyframes subtle-pulse {
   0%, 100% { 
-    transform: scale(1); 
     opacity: 1;
   }
   50% { 
-    transform: scale(1.1); 
     opacity: 0.8;
   }
 }
 
 .birthday-marker {
-  animation: pulse 2s infinite;
+  animation: subtle-pulse 3s infinite;
 }
 
-/* Backdrop blur effects */
-.modal-backdrop {
-  backdrop-filter: blur(5px);
-}
-
-/* Custom hover effects */
-.hover\:scale-102:hover {
-  transform: scale(1.02);
-}
-
-/* Glassmorphism effects */
-.glass {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.glass-dark {
-  background: rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
+/* Clean search styling */
 .search-container {
   position: relative;
   max-width: 400px;
@@ -115,22 +94,22 @@
 .search-input {
   width: 100%;
   padding: 12px 16px 12px 48px;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  border-radius: 50px;
-  background-color: rgba(255, 255, 255, 0.1);
-  color: white;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  background-color: var(--card);
+  color: var(--foreground);
   font-size: 16px;
   outline: none;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
 }
 
 .search-input::placeholder {
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--muted-foreground);
 }
 
 .search-input:focus {
-  border-color: rgba(255, 255, 255, 0.4);
-  background-color: rgba(255, 255, 255, 0.15);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px hsla(320, 65%, 65%, 0.1);
 }
 
 .search-icon {
@@ -138,7 +117,19 @@
   left: 16px;
   top: 50%;
   transform: translateY(-50%);
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--muted-foreground);
   pointer-events: none;
   z-index: 1;
+}
+
+/* Clean hover effects */
+.hover\:scale-102:hover {
+  transform: scale(1.01);
+}
+
+/* Minimal card styling */
+.glass {
+  background: var(--card);
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
