@@ -30,9 +30,15 @@ export default function BirthdayTimeline({ people, onMonthClick, selectedMonth }
     return people.filter(person => person.month === month).length;
   };
 
+  const getPeopleForMonth = (month: string) => {
+    return people.filter(person => person.month === month)
+      .sort((a, b) => (a.day || 0) - (b.day || 0));
+  };
+
   const renderMonth = (monthIndex: number, isTopRow: boolean, isFirst: boolean, isLast: boolean) => {
     const month = monthNames[monthIndex];
     const count = getBirthdayCount(month);
+    const monthPeople = getPeopleForMonth(month);
     const isSelected = selectedMonth === month;
     
     let chevronClass = 'timeline-chevron';
@@ -40,18 +46,36 @@ export default function BirthdayTimeline({ people, onMonthClick, selectedMonth }
     if (isLast) chevronClass = 'timeline-chevron-last';
     
     return (
-      <div 
-        key={month}
-        className={`${chevronClass} bg-gradient-to-r ${monthColors[month as keyof typeof monthColors]} h-16 flex items-center justify-center text-white font-bold text-sm relative cursor-pointer transition-all transform ${isSelected ? 'scale-105 shadow-lg' : 'hover:scale-102'}`}
-        onClick={() => onMonthClick(month)}
-      >
-        <span className={month === 'September' || month === 'December' || month === 'January' || month === 'November' ? 'text-black' : 'text-white'}>
-          {monthAbbr[monthIndex]}
-        </span>
-        {count > 0 && (
-          <div className={`absolute ${isTopRow ? '-bottom-2' : '-top-2'} left-1/2 transform -translate-x-1/2`}>
-            <div className={`w-4 h-4 bg-gradient-to-r ${monthColors[month as keyof typeof monthColors]} rounded-full flex items-center justify-center animate-pulse border-2 border-white`}>
-              <span className="text-xs font-bold text-white">{count}</span>
+      <div key={month} className="relative">
+        <div 
+          className={`${chevronClass} bg-gradient-to-r ${monthColors[month as keyof typeof monthColors]} h-16 flex items-center justify-center text-white font-bold text-sm relative cursor-pointer transition-all transform ${isSelected ? 'scale-105 shadow-lg' : 'hover:scale-102'}`}
+          onClick={() => onMonthClick(month)}
+        >
+          <span className={month === 'September' || month === 'December' || month === 'January' || month === 'November' ? 'text-black' : 'text-white'}>
+            {monthAbbr[monthIndex]}
+          </span>
+          {count > 0 && (
+            <div className={`absolute ${isTopRow ? '-bottom-2' : '-top-2'} left-1/2 transform -translate-x-1/2`}>
+              <div className={`w-4 h-4 bg-gradient-to-r ${monthColors[month as keyof typeof monthColors]} rounded-full flex items-center justify-center animate-pulse border-2 border-white`}>
+                <span className="text-xs font-bold text-white">{count}</span>
+              </div>
+            </div>
+          )}
+        </div>
+        
+        {/* Names and dates display */}
+        {monthPeople.length > 0 && (
+          <div className={`absolute ${isTopRow ? 'top-20' : 'bottom-20'} left-1/2 transform -translate-x-1/2 z-10`}>
+            <div className="bg-white bg-opacity-95 backdrop-blur-sm rounded-lg p-3 shadow-lg border border-white border-opacity-30 min-w-48">
+              <h4 className="font-semibold text-gray-800 text-sm mb-2 text-center">{month}</h4>
+              <div className="space-y-1">
+                {monthPeople.map((person, index) => (
+                  <div key={person.id} className="text-xs text-gray-700 flex justify-between">
+                    <span className="font-medium">{person.firstName} {person.lastName}</span>
+                    <span className="text-gray-500">{person.day}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         )}
