@@ -43,7 +43,6 @@ export default function BirthdayTimeline({ people, onMonthClick, selectedMonth }
     
     let chevronClass = 'timeline-chevron';
     if (isFirst) chevronClass = 'timeline-chevron-first';
-    if (isLast) chevronClass = 'timeline-chevron-last';
     
     return (
       <div key={month} className="relative">

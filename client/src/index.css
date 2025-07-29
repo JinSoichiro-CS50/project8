@@ -67,10 +67,6 @@
   clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 50%, calc(100% - 20px) 100%, 0 100%);
 }
 
-.timeline-chevron-last {
-  clip-path: polygon(20px 0, 100% 0, 100% 100%, 20px 100%, 0 50%);
-}
-
 /* Custom animations */
 @keyframes pulse {
   0%, 100% { 
