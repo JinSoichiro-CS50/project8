@@ -3,25 +3,25 @@
 @tailwind utilities;
 
 :root {
-  --background: hsl(0, 0%, 100%);
-  --foreground: hsl(20, 14.3%, 4.1%);
-  --muted: hsl(60, 4.8%, 95.9%);
-  --muted-foreground: hsl(25, 5.3%, 44.7%);
-  --popover: hsl(0, 0%, 100%);
-  --popover-foreground: hsl(20, 14.3%, 4.1%);
-  --card: hsl(0, 0%, 100%);
-  --card-foreground: hsl(20, 14.3%, 4.1%);
-  --border: hsl(20, 5.9%, 90%);
-  --input: hsl(20, 5.9%, 90%);
-  --primary: hsl(207, 90%, 54%);
-  --primary-foreground: hsl(211, 100%, 99%);
-  --secondary: hsl(60, 4.8%, 95.9%);
-  --secondary-foreground: hsl(24, 9.8%, 10%);
-  --accent: hsl(60, 4.8%, 95.9%);
-  --accent-foreground: hsl(24, 9.8%, 10%);
-  --destructive: hsl(0, 84.2%, 60.2%);
-  --destructive-foreground: hsl(60, 9.1%, 97.8%);
-  --ring: hsl(20, 14.3%, 4.1%);
+  --background: hsl(45, 30%, 96%);
+  --foreground: hsl(25, 15%, 25%);
+  --muted: hsl(45, 20%, 92%);
+  --muted-foreground: hsl(25, 10%, 50%);
+  --popover: hsl(45, 25%, 98%);
+  --popover-foreground: hsl(25, 15%, 25%);
+  --card: hsl(45, 25%, 98%);
+  --card-foreground: hsl(25, 15%, 25%);
+  --border: hsl(45, 15%, 85%);
+  --input: hsl(45, 15%, 90%);
+  --primary: hsl(340, 50%, 70%);
+  --primary-foreground: hsl(0, 0%, 100%);
+  --secondary: hsl(45, 15%, 88%);
+  --secondary-foreground: hsl(25, 15%, 30%);
+  --accent: hsl(340, 30%, 85%);
+  --accent-foreground: hsl(25, 15%, 30%);
+  --destructive: hsl(0, 70%, 60%);
+  --destructive-foreground: hsl(0, 0%, 100%);
+  --ring: hsl(340, 50%, 70%);
   --radius: 0.5rem;
 }
 
@@ -55,32 +55,37 @@
 
   body {
     @apply font-sans antialiased bg-background text-foreground;
+    background-image: 
+      linear-gradient(rgba(0,0,0,0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,0,0,0.02) 1px, transparent 1px);
+    background-size: 30px 30px;
   }
 }
 
-/* Timeline Chevron Styles */
-.timeline-chevron {
-  clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 50%, calc(100% - 20px) 100%, 0 100%, 20px 50%);
+/* Timeline Month Styles - Clean and Minimal */
+.timeline-month {
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
 }
 
-.timeline-chevron-first {
-  clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 50%, calc(100% - 20px) 100%, 0 100%);
+.timeline-month:hover {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
 }
 
-/* Custom animations */
-@keyframes pulse {
+/* Subtle animations */
+@keyframes gentlePulse {
   0%, 100% { 
-    transform: scale(1); 
     opacity: 1;
   }
   50% { 
-    transform: scale(1.1); 
     opacity: 0.8;
   }
 }
 
-.birthday-marker {
-  animation: pulse 2s infinite;
+.birthday-indicator {
+  animation: gentlePulse 3s infinite;
 }
 
 /* Backdrop blur effects */

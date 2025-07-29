@@ -65,24 +65,24 @@ export default function Home() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 flex items-center justify-center">
-        <div className="text-white text-xl">Loading birthdays...</div>
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-foreground text-xl">Loading birthdays...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="bg-black bg-opacity-30 backdrop-blur-md border-b border-white border-opacity-20">
+      <header className="bg-white bg-opacity-80 backdrop-blur-sm border-b border-border shadow-sm">
         <div className="container mx-auto px-4 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="text-center md:text-left">
-              <h1 className="text-3xl md:text-4xl font-bold text-white">
-                <Cake className="inline-block text-yellow-400 mr-3 h-8 w-8" />
+              <h1 className="text-3xl md:text-4xl font-bold text-foreground">
+                <Cake className="inline-block text-rose-500 mr-3 h-8 w-8" />
                 Birthday Timeline
               </h1>
-              <p className="text-blue-200 mt-2">Family & Friends Celebration Calendar</p>
+              <p className="text-muted-foreground mt-2">Family & Friends Celebration Calendar</p>
             </div>
             <div className="flex flex-col sm:flex-row gap-3">
               <div className="relative">
@@ -91,20 +91,20 @@ export default function Home() {
                   placeholder="Search by name..." 
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="bg-white bg-opacity-20 border border-white border-opacity-30 rounded-full px-4 py-2 pl-10 text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:bg-opacity-30"
+                  className="bg-white border border-border rounded-lg px-4 py-2 pl-10 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
                 />
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-200 h-4 w-4" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
               </div>
               <button 
                 onClick={handleAddPerson}
-                className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-6 py-2 rounded-full transition-colors"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-6 py-2 rounded-lg transition-colors"
               >
                 <Plus className="inline-block mr-2 h-4 w-4" />
                 Add Person
               </button>
               <button 
                 onClick={handleExportCSV}
-                className="bg-green-500 hover:bg-green-600 text-white font-semibold px-6 py-2 rounded-full transition-colors"
+                className="bg-secondary hover:bg-secondary/80 text-secondary-foreground font-semibold px-6 py-2 rounded-lg transition-colors"
               >
                 <Download className="inline-block mr-2 h-4 w-4" />
                 Export
@@ -119,8 +119,8 @@ export default function Home() {
 
       {/* Timeline Section */}
       <section className="container mx-auto px-4 py-8">
-        <div className="bg-white bg-opacity-5 backdrop-blur-md rounded-2xl p-8">
-          <h2 className="text-2xl font-bold text-white text-center mb-8">Yearly Birthday Timeline</h2>
+        <div className="bg-card border border-border rounded-xl p-8 shadow-sm">
+          <h2 className="text-2xl font-bold text-foreground text-center mb-8">Yearly Birthday Timeline</h2>
           <BirthdayTimeline 
             people={validPeople} 
             onMonthClick={handleMonthClick}
@@ -142,7 +142,7 @@ export default function Home() {
           ))}
         </div>
         {filteredPeople.length === 0 && (
-          <div className="text-center text-white text-xl py-12">
+          <div className="text-center text-muted-foreground text-xl py-12">
             {searchTerm || selectedMonth ? 'No matching birthdays found' : 'No birthdays to display'}
           </div>
         )}

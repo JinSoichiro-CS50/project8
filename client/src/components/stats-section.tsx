@@ -26,21 +26,21 @@ export default function StatsSection({ people }: StatsSectionProps) {
   return (
     <section className="container mx-auto px-4 py-8">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="bg-white bg-opacity-10 backdrop-blur-md rounded-xl p-6 text-center">
-          <div className="text-3xl font-bold text-yellow-400">{people.length}</div>
-          <div className="text-blue-200 mt-1">Total People</div>
+        <div className="bg-card border border-border rounded-xl p-6 text-center shadow-sm">
+          <div className="text-3xl font-bold text-rose-600">{people.length}</div>
+          <div className="text-muted-foreground mt-1">Total People</div>
         </div>
-        <div className="bg-white bg-opacity-10 backdrop-blur-md rounded-xl p-6 text-center">
-          <div className="text-3xl font-bold text-green-400">{thisMonthCount}</div>
-          <div className="text-blue-200 mt-1">This Month</div>
+        <div className="bg-card border border-border rounded-xl p-6 text-center shadow-sm">
+          <div className="text-3xl font-bold text-rose-600">{thisMonthCount}</div>
+          <div className="text-muted-foreground mt-1">This Month</div>
         </div>
-        <div className="bg-white bg-opacity-10 backdrop-blur-md rounded-xl p-6 text-center">
-          <div className="text-3xl font-bold text-orange-400">{upcomingCount}</div>
-          <div className="text-blue-200 mt-1">Next 30 Days</div>
+        <div className="bg-card border border-border rounded-xl p-6 text-center shadow-sm">
+          <div className="text-3xl font-bold text-rose-600">{upcomingCount}</div>
+          <div className="text-muted-foreground mt-1">Next 30 Days</div>
         </div>
-        <div className="bg-white bg-opacity-10 backdrop-blur-md rounded-xl p-6 text-center">
-          <div className="text-3xl font-bold text-pink-400">{todayCount}</div>
-          <div className="text-blue-200 mt-1">Today</div>
+        <div className="bg-card border border-border rounded-xl p-6 text-center shadow-sm">
+          <div className="text-3xl font-bold text-rose-600">{todayCount}</div>
+          <div className="text-muted-foreground mt-1">Today</div>
         </div>
       </div>
     </section>
