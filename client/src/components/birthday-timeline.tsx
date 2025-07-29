@@ -60,23 +60,6 @@ export default function BirthdayTimeline({ people, onMonthClick, selectedMonth }
             </div>
           )}
         </div>
-        
-        {/* Names and dates display */}
-        {monthPeople.length > 0 && (
-          <div className={`absolute ${isTopRow ? 'top-20' : 'bottom-20'} left-1/2 transform -translate-x-1/2 z-10`}>
-            <div className="bg-white bg-opacity-95 backdrop-blur-sm rounded-lg p-4 shadow-lg border border-rose-100 min-w-48">
-              <h4 className="font-semibold text-rose-700 text-sm mb-3 text-center">{month}</h4>
-              <div className="space-y-2">
-                {monthPeople.map((person) => (
-                  <div key={person.id} className="text-sm text-gray-700 flex justify-between items-center">
-                    <span className="font-medium">{person.firstName} {person.lastName}</span>
-                    <span className="text-rose-500 font-semibold text-xs bg-rose-50 px-2 py-1 rounded-full">{person.day}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     );
   };
