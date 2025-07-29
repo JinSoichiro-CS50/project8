@@ -7,18 +7,18 @@ interface BirthdayTimelineProps {
 }
 
 const monthColors = {
-  'January': 'from-gray-600 to-gray-700',
-  'February': 'from-gray-600 to-gray-700', 
-  'March': 'from-gray-600 to-gray-700',
-  'April': 'from-gray-600 to-gray-700',
-  'May': 'from-gray-600 to-gray-700',
-  'June': 'from-gray-600 to-gray-700',
-  'July': 'from-gray-600 to-gray-700',
-  'August': 'from-gray-600 to-gray-700',
-  'September': 'from-gray-600 to-gray-700',
-  'October': 'from-gray-600 to-gray-700',
-  'November': 'from-gray-600 to-gray-700',
-  'December': 'from-gray-600 to-gray-700'
+  'January': 'from-yellow-400 to-yellow-500',
+  'February': 'from-orange-400 to-orange-500', 
+  'March': 'from-red-500 to-red-600',
+  'April': 'from-pink-500 to-pink-600',
+  'May': 'from-purple-500 to-purple-600',
+  'June': 'from-indigo-500 to-indigo-600',
+  'July': 'from-blue-500 to-blue-600',
+  'August': 'from-sky-400 to-sky-500',
+  'September': 'from-cyan-400 to-cyan-500',
+  'October': 'from-green-500 to-green-600',
+  'November': 'from-lime-400 to-lime-500',
+  'December': 'from-yellow-300 to-yellow-400'
 };
 
 const monthAbbr = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
@@ -46,16 +46,16 @@ export default function BirthdayTimeline({ people, onMonthClick, selectedMonth }
     return (
       <div key={month} className="relative">
         <div 
-          className={`${chevronClass} ${isSelected ? 'bg-gray-800' : 'bg-gray-700 hover:bg-gray-600'} h-16 flex items-center justify-center text-white font-medium text-sm relative cursor-pointer transition-all duration-200`}
+          className={`${chevronClass} bg-gradient-to-r ${monthColors[month as keyof typeof monthColors]} h-16 flex items-center justify-center text-white font-bold text-sm relative cursor-pointer transition-all transform ${isSelected ? 'scale-105 shadow-lg' : 'hover:scale-102'}`}
           onClick={() => onMonthClick(month)}
         >
-          <span className="text-white">
+          <span className={month === 'September' || month === 'December' || month === 'January' || month === 'November' ? 'text-black' : 'text-white'}>
             {monthAbbr[monthIndex]}
           </span>
           {count > 0 && (
             <div className={`absolute ${isTopRow ? '-bottom-2' : '-top-2'} left-1/2 transform -translate-x-1/2`}>
-              <div className="w-5 h-5 bg-gray-800 rounded-full flex items-center justify-center border-2 border-white shadow-sm">
-                <span className="text-xs font-medium text-white">{count}</span>
+              <div className={`w-4 h-4 bg-gradient-to-r ${monthColors[month as keyof typeof monthColors]} rounded-full flex items-center justify-center animate-pulse border-2 border-white`}>
+                <span className="text-xs font-bold text-white">{count}</span>
               </div>
             </div>
           )}
@@ -84,11 +84,11 @@ export default function BirthdayTimeline({ people, onMonthClick, selectedMonth }
       
       {selectedMonth && (
         <div className="mt-6 text-center">
-          <p className="text-muted-foreground">
-            Showing birthdays for <span className="text-foreground font-medium">{selectedMonth}</span>
+          <p className="text-blue-200">
+            Showing birthdays for <span className="text-yellow-400 font-semibold">{selectedMonth}</span>
             <button 
               onClick={() => onMonthClick(selectedMonth)}
-              className="ml-2 text-primary hover:text-primary/80 underline"
+              className="ml-2 text-yellow-400 hover:text-yellow-300 underline"
             >
               Clear filter
             </button>
