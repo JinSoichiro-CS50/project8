@@ -63,22 +63,7 @@ export default function BirthdayTimeline({ people, onMonthClick, selectedMonth }
           )}
         </div>
         
-        {/* Names and dates display */}
-        {monthPeople.length > 0 && (
-          <div className={`absolute ${isTopRow ? 'top-20' : 'bottom-20'} left-1/2 transform -translate-x-1/2 z-10`}>
-            <div className="bg-white bg-opacity-95 backdrop-blur-sm rounded-lg p-3 shadow-lg border border-white border-opacity-30 min-w-48">
-              <h4 className="font-semibold text-gray-800 text-sm mb-2 text-center">{month}</h4>
-              <div className="space-y-1">
-                {monthPeople.map((person, index) => (
-                  <div key={person.id} className="text-xs text-gray-700 flex justify-between">
-                    <span className="font-medium">{person.firstName} {person.lastName}</span>
-                    <span className="text-gray-500">{person.day}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
+        
       </div>
     );
   };
