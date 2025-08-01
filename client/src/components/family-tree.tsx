@@ -52,6 +52,8 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
   const [connectionMode, setConnectionMode] = useState(false);
   const [zoom, setZoom] = useState(1);
   const [pan, setPan] = useState<Position>({ x: 0, y: 0 });
+  const [isPanning, setIsPanning] = useState(false);
+  const [panStart, setPanStart] = useState<Position>({ x: 0, y: 0 });
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -112,24 +114,37 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
     }
   }, [connectionMode, selectedPerson, nodes, zoom, pan]);
 
-  const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    if (!draggedNode) return;
-
-    const rect = svgRef.current?.getBoundingClientRect();
-    if (rect) {
-      const newX = (e.clientX - rect.left) / zoom - pan.x - dragOffset.x;
-      const newY = (e.clientY - rect.top) / zoom - pan.y - dragOffset.y;
-
-      setNodes(prev => prev.map(node => 
-        node.id === draggedNode 
-          ? { ...node, position: { x: newX, y: newY } }
-          : node
-      ));
+  const handleCanvasMouseDown = useCallback((e: React.MouseEvent) => {
+    if (e.target === svgRef.current) {
+      setIsPanning(true);
+      setPanStart({ x: e.clientX - pan.x, y: e.clientY - pan.y });
     }
-  }, [draggedNode, dragOffset, zoom, pan]);
+  }, [pan]);
+
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    if (draggedNode) {
+      const rect = svgRef.current?.getBoundingClientRect();
+      if (rect) {
+        const newX = (e.clientX - rect.left) / zoom - pan.x - dragOffset.x;
+        const newY = (e.clientY - rect.top) / zoom - pan.y - dragOffset.y;
+
+        setNodes(prev => prev.map(node => 
+          node.id === draggedNode 
+            ? { ...node, position: { x: newX, y: newY } }
+            : node
+        ));
+      }
+    } else if (isPanning) {
+      setPan({
+        x: e.clientX - panStart.x,
+        y: e.clientY - panStart.y
+      });
+    }
+  }, [draggedNode, dragOffset, zoom, pan, isPanning, panStart]);
 
   const handleMouseUp = useCallback(() => {
     setDraggedNode(null);
+    setIsPanning(false);
   }, []);
 
   const handleWheel = useCallback((e: React.WheelEvent) => {
@@ -238,11 +253,14 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
         </div>
 
         <div className="flex gap-2 ml-auto">
-          <Button size="sm" variant="outline" onClick={() => setZoom(prev => prev * 1.2)}>
+          <Button size="sm" variant="outline" onClick={() => setZoom(prev => Math.min(3, prev * 1.2))}>
             <Plus className="h-4 w-4" />
           </Button>
-          <Button size="sm" variant="outline" onClick={() => setZoom(prev => prev * 0.8)}>
+          <Button size="sm" variant="outline" onClick={() => setZoom(prev => Math.max(0.1, prev * 0.8))}>
             <Minus className="h-4 w-4" />
+          </Button>
+          <Button size="sm" variant="outline" onClick={() => { setZoom(1); setPan({ x: 0, y: 0 }); }}>
+            Reset View
           </Button>
           <Button size="sm" onClick={saveFamilyTree} disabled={saveFamilyTreeMutation.isPending}>
             <Save className="h-4 w-4 mr-2" />
@@ -257,16 +275,28 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
         </div>
       )}
 
+      {!connectionMode && (
+        <div className="bg-gray-50 border-b border-gray-200 p-2 text-sm text-gray-700">
+          Drag people to move them around • Drag empty space to pan • Scroll to zoom • Use Reset View to center
+        </div>
+      )}
+
       {/* Family Tree Canvas */}
-      <div className="relative w-full h-[600px] overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
+      <div className="relative w-full h-[800px] overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
         <svg
           ref={svgRef}
-          className="w-full h-full cursor-move"
+          className={`w-full h-full ${isPanning ? 'cursor-grabbing' : 'cursor-grab'}`}
+          onMouseDown={handleCanvasMouseDown}
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
           onWheel={handleWheel}
-          style={{ transform: `scale(${zoom}) translate(${pan.x}px, ${pan.y}px)` }}
-        >
+          style={{ 
+            transform: `scale(${zoom}) translate(${pan.x}px, ${pan.y}px)`,
+            minWidth: '200%',
+            minHeight: '200%'
+          }}
+          viewBox={`${-pan.x / zoom} ${-pan.y / zoom} ${1600 / zoom} ${1600 / zoom}`}
+        ></svg>
           {/* Connections */}
           {renderConnections()}
 
@@ -282,7 +312,7 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
                   width="120"
                   height="140"
                   fill="transparent"
-                  className="cursor-pointer"
+                  className={`cursor-${draggedNode === node.id ? 'grabbing' : 'grab'}`}
                   onMouseDown={(e) => handleMouseDown(e, node.id)}
                 />
                 
