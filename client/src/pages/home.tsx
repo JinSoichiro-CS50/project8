@@ -101,13 +101,6 @@ export default function Home() {
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
               </div>
               <button 
-                onClick={handleAddPerson}
-                className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-6 py-2 rounded-lg transition-colors"
-              >
-                <Plus className="inline-block mr-2 h-4 w-4" />
-                Add Person
-              </button>
-              <button 
                 onClick={handleExportCSV}
                 className="bg-secondary hover:bg-secondary/80 text-secondary-foreground font-semibold px-6 py-2 rounded-lg transition-colors"
               >
