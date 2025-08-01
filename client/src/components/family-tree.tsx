@@ -48,14 +48,10 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
   const [connections, setConnections] = useState<Connection[]>([]);
   const [draggedNode, setDraggedNode] = useState<string | null>(null);
   const [dragOffset, setDragOffset] = useState<Position>({ x: 0, y: 0 });
-  const [selectedPerson, setSelectedPerson] = useState<string | null>(null);
-  const [connectionMode, setConnectionMode] = useState(false);
   const [zoom, setZoom] = useState(1);
   const [pan, setPan] = useState<Position>({ x: 0, y: 0 });
   const [isPanning, setIsPanning] = useState(false);
   const [panStart, setPanStart] = useState<Position>({ x: 0, y: 0 });
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Initialize nodes with default positions
@@ -70,37 +66,9 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
     setNodes(initialNodes);
   }, [people]);
 
-  const saveFamilyTreeMutation = useMutation({
-    mutationFn: (data: { nodes: PersonNode[], connections: Connection[] }) => 
-      apiRequest("POST", "/api/family-tree", data),
-    onSuccess: () => {
-      toast({ title: "Success", description: "Family tree saved successfully!" });
-    },
-    onError: () => {
-      toast({ title: "Error", description: "Failed to save family tree", variant: "destructive" });
-    },
-  });
-
   const handleMouseDown = useCallback((e: React.MouseEvent, nodeId: string) => {
     e.preventDefault();
     
-    if (connectionMode) {
-      if (selectedPerson && selectedPerson !== nodeId) {
-        // Create connection
-        const newConnection: Connection = {
-          id: `${selectedPerson}-${nodeId}-${Date.now()}`,
-          fromPersonId: selectedPerson,
-          toPersonId: nodeId,
-        };
-        setConnections(prev => [...prev, newConnection]);
-        setSelectedPerson(null);
-        setConnectionMode(false);
-      } else {
-        setSelectedPerson(nodeId);
-      }
-      return;
-    }
-
     setDraggedNode(nodeId);
     const rect = svgRef.current?.getBoundingClientRect();
     if (rect) {
@@ -112,7 +80,7 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
         });
       }
     }
-  }, [connectionMode, selectedPerson, nodes, zoom, pan]);
+  }, [nodes, zoom, pan]);
 
   const handleCanvasMouseDown = useCallback((e: React.MouseEvent) => {
     if (e.target === svgRef.current) {
@@ -153,6 +121,8 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
     setZoom(prev => Math.max(0.1, Math.min(3, prev * delta)));
   }, []);
 
+  const [selectedPersonForUpload, setSelectedPersonForUpload] = useState<string | null>(null);
+
   const handleProfilePictureUpload = (nodeId: string, file: File) => {
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -177,57 +147,7 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
     return monthColors[person.month as keyof typeof monthColors] || '#d1d5db';
   };
 
-  const renderConnections = () => {
-    return connections.map(conn => {
-      const fromNode = nodes.find(n => n.id === conn.fromPersonId);
-      const toNode = nodes.find(n => n.id === conn.toPersonId);
-      
-      if (!fromNode || !toNode) return null;
-
-      // Calculate connection points for profile pictures
-      const fromX = fromNode.position.x;
-      const fromY = fromNode.position.y;
-      const toX = toNode.position.x;
-      const toY = toNode.position.y;
-
-      // Create a path for the connection line
-      const midY = (fromY + toY) / 2;
-      
-      return (
-        <g key={conn.id}>
-          <path
-            d={`M ${fromX} ${fromY} L ${fromX} ${midY} L ${toX} ${midY} L ${toX} ${toY}`}
-            stroke="#8b7355"
-            strokeWidth="2"
-            fill="none"
-            className="cursor-pointer hover:stroke-red-500"
-            onClick={() => deleteConnection(conn.id)}
-          />
-          {/* Connection endpoints */}
-          <circle
-            cx={fromX}
-            cy={fromY}
-            r="3"
-            fill="#8b7355"
-          />
-          <circle
-            cx={toX}
-            cy={toY}
-            r="3"
-            fill="#8b7355"
-          />
-        </g>
-      );
-    });
-  };
-
-  const deleteConnection = (connectionId: string) => {
-    setConnections(prev => prev.filter(c => c.id !== connectionId));
-  };
-
-  const saveFamilyTree = () => {
-    saveFamilyTreeMutation.mutate({ nodes, connections });
-  };
+  
 
   return (
     <div className="w-full h-full bg-background border border-border rounded-lg overflow-hidden">
@@ -236,20 +156,6 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
         <div className="flex items-center gap-2">
           <Users className="h-5 w-5" />
           <span className="font-semibold">Family Tree</span>
-        </div>
-        
-        <div className="flex gap-2">
-          <Button
-            size="sm"
-            variant={connectionMode ? 'default' : 'outline'}
-            onClick={() => {
-              setConnectionMode(!connectionMode);
-              setSelectedPerson(null);
-            }}
-          >
-            <Link className="h-4 w-4 mr-2" />
-            Connect People
-          </Button>
         </div>
 
         <div className="flex gap-2 ml-auto">
@@ -262,24 +168,12 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
           <Button size="sm" variant="outline" onClick={() => { setZoom(1); setPan({ x: 0, y: 0 }); }}>
             Reset View
           </Button>
-          <Button size="sm" onClick={saveFamilyTree} disabled={saveFamilyTreeMutation.isPending}>
-            <Save className="h-4 w-4 mr-2" />
-            Save Tree
-          </Button>
         </div>
       </div>
 
-      {connectionMode && (
-        <div className="bg-blue-50 border-b border-blue-200 p-2 text-sm text-blue-800">
-          Click on a person to start connecting, then click on another person to create a line between them.
-        </div>
-      )}
-
-      {!connectionMode && (
-        <div className="bg-gray-50 border-b border-gray-200 p-2 text-sm text-gray-700">
-          Drag people to move them around • Drag empty space to pan • Scroll to zoom • Use Reset View to center
-        </div>
-      )}
+      <div className="bg-gray-50 border-b border-gray-200 p-2 text-sm text-gray-700">
+        Drag people to move them around • Drag empty space to pan • Scroll to zoom • Use Reset View to center
+      </div>
 
       {/* Family Tree Canvas */}
       <div className="relative w-full h-[800px] overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
@@ -297,9 +191,6 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
           }}
           viewBox={`${-pan.x / zoom} ${-pan.y / zoom} ${1600 / zoom} ${1600 / zoom}`}
         >
-          {/* Connections */}
-          {renderConnections()}
-
           {/* Person Nodes */}
           {nodes.map(node => {
             const borderColor = getPersonBorderColor(node);
@@ -331,7 +222,7 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
                   fill="none"
                   stroke={borderColor}
                   strokeWidth="6"
-                  className={selectedPerson === node.id ? 'opacity-100' : 'opacity-80'}
+                  className="opacity-80"
                 />
                 
                 {/* Inner white ring */}
@@ -355,7 +246,7 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
                     clipPath={`url(#clip-${node.id})`}
                     className="cursor-pointer"
                     onClick={() => {
-                      setSelectedPerson(node.id);
+                      setSelectedPersonForUpload(node.id);
                       fileInputRef.current?.click();
                     }}
                   />
@@ -368,7 +259,7 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
                       fill="#f8f8f8"
                       className="cursor-pointer hover:fill-gray-100"
                       onClick={() => {
-                        setSelectedPerson(node.id);
+                        setSelectedPersonForUpload(node.id);
                         fileInputRef.current?.click();
                       }}
                     />
@@ -416,41 +307,15 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
           className="hidden"
           onChange={(e) => {
             const file = e.target.files?.[0];
-            if (file && selectedPerson) {
-              handleProfilePictureUpload(selectedPerson, file);
+            if (file && selectedPersonForUpload) {
+              handleProfilePictureUpload(selectedPersonForUpload, file);
             }
             e.target.value = ''; // Reset input
           }}
         />
       </div>
 
-      {/* Connection List */}
-      {connections.length > 0 && (
-        <div className="border-t border-border p-4">
-          <h3 className="font-semibold mb-3">Family Connections</h3>
-          <div className="space-y-2 max-h-32 overflow-y-auto">
-            {connections.map(conn => {
-              const fromPerson = people.find(p => p.id === conn.fromPersonId);
-              const toPerson = people.find(p => p.id === conn.toPersonId);
-              
-              return (
-                <div key={conn.id} className="flex items-center justify-between text-sm bg-card p-2 rounded border">
-                  <span>
-                    {fromPerson?.firstName} {fromPerson?.lastName} ⟷ {toPerson?.firstName} {toPerson?.lastName}
-                  </span>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => deleteConnection(conn.id)}
-                  >
-                    <Trash2 className="h-3 w-3" />
-                  </Button>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
+      
     </div>
   );
 }
