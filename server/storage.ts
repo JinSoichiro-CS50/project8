@@ -50,7 +50,15 @@ export class MemStorage implements IStorage {
 
     initialPeople.forEach(person => {
       const id = randomUUID();
-      this.people.set(id, { ...person, id });
+      const personRecord: Person = {
+        id,
+        firstName: person.firstName,
+        lastName: person.lastName,
+        month: person.month ?? null,
+        day: person.day ?? null,
+        year: person.year ?? null,
+      };
+      this.people.set(id, personRecord);
     });
   }
 
@@ -64,7 +72,14 @@ export class MemStorage implements IStorage {
 
   async createPerson(insertPerson: InsertPerson): Promise<Person> {
     const id = randomUUID();
-    const person: Person = { ...insertPerson, id };
+    const person: Person = {
+      id,
+      firstName: insertPerson.firstName,
+      lastName: insertPerson.lastName,
+      month: insertPerson.month ?? null,
+      day: insertPerson.day ?? null,
+      year: insertPerson.year ?? null,
+    };
     this.people.set(id, person);
     return person;
   }
@@ -88,7 +103,14 @@ export class MemStorage implements IStorage {
     
     peopleToImport.forEach(person => {
       const id = randomUUID();
-      const newPerson: Person = { ...person, id };
+      const newPerson: Person = {
+        id,
+        firstName: person.firstName,
+        lastName: person.lastName,
+        month: person.month ?? null,
+        day: person.day ?? null,
+        year: person.year ?? null,
+      };
       this.people.set(id, newPerson);
       importedPeople.push(newPerson);
     });

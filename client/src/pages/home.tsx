@@ -1,15 +1,7 @@
 import { useState } from 'react';
-import { Search } from 'lucide-react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { BirthdayTimeline } from '@/components/birthday-timeline';
-import { BirthdayCard } from '@/components/birthday-card';
-import { PersonModal } from '@/components/person-modal';
-import { StatsSection } from '@/components/stats-section';
+import { useQuery } from '@tanstack/react-query';
 import { ThemeToggle } from '@/components/theme-toggle';
 import type { Person } from '@shared/schema';
-import { Person } from "@shared/schema";
 import BirthdayTimeline from "@/components/birthday-timeline";
 import BirthdayCard from "@/components/birthday-card";
 import PersonModal from "@/components/person-modal";
