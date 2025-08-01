@@ -76,15 +76,15 @@ export default function Home() {
     <div className="min-h-screen bg-background text-foreground">
       <ThemeToggle />
       {/* Header */}
-      <header className="bg-white bg-opacity-80 backdrop-blur-sm border-b border-border shadow-sm">
+      <header className="bg-card bg-opacity-90 backdrop-blur-sm border-b border-border shadow-sm">
         <div className="container mx-auto px-4 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="text-center md:text-left">
-              <h1 className="text-3xl md:text-4xl font-bold text-foreground">
+              <h1 className="text-3xl md:text-4xl font-bold text-card-foreground">
                 <Cake className="inline-block text-rose-500 mr-3 h-8 w-8" />
                 Birthday Timeline
               </h1>
-              <p className="text-muted-foreground mt-2">Family & Friends Celebration Calendar</p>
+              <p className="text-card-foreground/70 mt-2">Family & Friends Celebration Calendar</p>
             </div>
             <div className="flex flex-col sm:flex-row gap-3">
               <div className="relative">
