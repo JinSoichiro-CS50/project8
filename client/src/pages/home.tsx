@@ -8,12 +8,14 @@ import BirthdayCard from "@/components/birthday-card";
 import StatsSection from "@/components/stats-section";
 import FamilyTree from "@/components/family-tree";
 import { downloadCSV } from "@/lib/csv-utils";
+import { getDaysUntilBirthday } from "@/lib/date-utils";
 import { Search, Plus, Download, Cake, Calendar, Users } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
+  const [statsFilter, setStatsFilter] = useState<'today' | 'thisWeek' | 'next30Days' | 'all' | null>(null);
   
   const [activeTab, setActiveTab] = useState("timeline");
 
@@ -28,7 +30,27 @@ export default function Home() {
       .toLowerCase()
       .includes(searchTerm.toLowerCase());
     const matchesMonth = selectedMonth ? person.month === selectedMonth : true;
-    return matchesSearch && matchesMonth;
+    
+    let matchesStatsFilter = true;
+    if (statsFilter) {
+      const days = getDaysUntilBirthday(person.month!, person.day!);
+      switch (statsFilter) {
+        case 'today':
+          matchesStatsFilter = days === 0;
+          break;
+        case 'thisWeek':
+          matchesStatsFilter = days <= 7 && days >= 0;
+          break;
+        case 'next30Days':
+          matchesStatsFilter = days <= 30 && days > 0;
+          break;
+        case 'all':
+          matchesStatsFilter = true;
+          break;
+      }
+    }
+    
+    return matchesSearch && matchesMonth && matchesStatsFilter;
   });
 
   const sortedPeople = [...filteredPeople].sort((a, b) => {
@@ -53,6 +75,12 @@ export default function Home() {
 
   const handleMonthClick = (month: string) => {
     setSelectedMonth(selectedMonth === month ? null : month);
+    setStatsFilter(null); // Clear stats filter when month is selected
+  };
+
+  const handleStatsFilterClick = (filterType: 'today' | 'thisWeek' | 'next30Days' | 'all') => {
+    setStatsFilter(statsFilter === filterType ? null : filterType);
+    setSelectedMonth(null); // Clear month filter when stats filter is selected
   };
 
   if (isLoading) {
@@ -101,7 +129,7 @@ export default function Home() {
       </header>
 
       {/* Stats Section */}
-      <StatsSection people={validPeople} />
+      <StatsSection people={validPeople} onFilterClick={handleStatsFilterClick} />
 
       {/* Main Content Tabs */}
       <section className="container mx-auto px-4 py-8">
