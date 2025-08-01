@@ -44,9 +44,9 @@ export class MemStorage implements IStorage {
       { firstName: "Tala", lastName: "Porto", month: "January", day: 5, year: null },
       { firstName: "Alon", lastName: "Porto", month: "January", day: 4, year: null },
       { firstName: "Rap", lastName: "Sevilla", month: "June", day: 10, year: 1996 },
-      { firstName: "Alex", lastName: "Sevilla", month: null, day: null, year: null },
+      { firstName: "Alex", lastName: "Sevilla", month: "February", day: 15, year: null },
       { firstName: "Steven", lastName: "Kuo", month: "March", day: 20, year: null },
-      { firstName: "Patricia", lastName: "Kuo", month: "December", day: 16, year: null }
+      { firstName: "Patricia", lastName: "Kuo", month: "December", day: 16, year: null },
     ];
 
     initialPeople.forEach(person => {
