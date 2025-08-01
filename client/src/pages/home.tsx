@@ -4,8 +4,7 @@ import { ThemeToggle } from '@/components/theme-toggle';
 import type { Person } from '@shared/schema';
 import BirthdayTimeline from "@/components/birthday-timeline";
 import BirthdayCard from "@/components/birthday-card";
-import PersonModal from "@/components/person-modal";
-import DeleteModal from "@/components/delete-modal";
+
 import StatsSection from "@/components/stats-section";
 import FamilyTree from "@/components/family-tree";
 import { downloadCSV } from "@/lib/csv-utils";
@@ -15,10 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
-  const [isPersonModalOpen, setIsPersonModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [editingPerson, setEditingPerson] = useState<Person | null>(null);
-  const [personToDelete, setPersonToDelete] = useState<Person | null>(null);
+  
   const [activeTab, setActiveTab] = useState("timeline");
 
   const { data: people = [], isLoading } = useQuery<Person[]>({
@@ -49,15 +45,7 @@ export default function Home() {
     setIsPersonModalOpen(true);
   };
 
-  const handleEditPerson = (person: Person) => {
-    setEditingPerson(person);
-    setIsPersonModalOpen(true);
-  };
-
-  const handleDeletePerson = (person: Person) => {
-    setPersonToDelete(person);
-    setIsDeleteModalOpen(true);
-  };
+  
 
   const handleExportCSV = () => {
     downloadCSV(people);
@@ -146,8 +134,6 @@ export default function Home() {
                 <BirthdayCard 
                   key={person.id}
                   person={person}
-                  onEdit={handleEditPerson}
-                  onDelete={handleDeletePerson}
                 />
               ))}
             </div>
@@ -166,18 +152,7 @@ export default function Home() {
         </Tabs>
       </section>
 
-      {/* Modals */}
-      <PersonModal 
-        open={isPersonModalOpen}
-        onOpenChange={setIsPersonModalOpen}
-        person={editingPerson}
-      />
-
-      <DeleteModal 
-        open={isDeleteModalOpen}
-        onOpenChange={setIsDeleteModalOpen}
-        person={personToDelete}
-      />
+      
     </div>
   );
 }

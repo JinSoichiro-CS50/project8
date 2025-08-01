@@ -26,7 +26,7 @@ const monthColors = {
 
 export default function BirthdayCard({ person, onEdit, onDelete }: BirthdayCardProps) {
   if (!person.month || !person.day) return null;
-  
+
   const age = person.year ? new Date().getFullYear() - person.year : null;
   const ageText = age ? `(${age} years old)` : '';
   const daysUntil = getDaysUntilBirthday(person.month, person.day);
@@ -42,20 +42,6 @@ export default function BirthdayCard({ person, onEdit, onDelete }: BirthdayCardP
           <p className="text-muted-foreground text-sm">
             {person.month} {person.day} {ageText}
           </p>
-        </div>
-        <div className="flex gap-2">
-          <button 
-            onClick={() => onEdit(person)}
-            className="text-primary hover:text-primary/80 p-1 rounded transition-colors"
-          >
-            <Edit className="h-4 w-4" />
-          </button>
-          <button 
-            onClick={() => onDelete(person)}
-            className="text-destructive hover:text-destructive/80 p-1 rounded transition-colors"
-          >
-            <Trash2 className="h-4 w-4" />
-          </button>
         </div>
       </div>
       <div className="text-xs text-muted-foreground">
