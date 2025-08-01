@@ -7,18 +7,18 @@ interface BirthdayTimelineProps {
 }
 
 const monthColors = {
-  'January': 'from-rose-200 to-rose-300',
-  'February': 'from-rose-200 to-rose-300', 
-  'March': 'from-rose-200 to-rose-300',
-  'April': 'from-rose-200 to-rose-300',
-  'May': 'from-rose-200 to-rose-300',
-  'June': 'from-rose-200 to-rose-300',
-  'July': 'from-rose-200 to-rose-300',
-  'August': 'from-rose-200 to-rose-300',
-  'September': 'from-rose-200 to-rose-300',
-  'October': 'from-rose-200 to-rose-300',
-  'November': 'from-rose-200 to-rose-300',
-  'December': 'from-rose-200 to-rose-300'
+  'January': 'from-orange-400 to-orange-500',
+  'February': 'from-yellow-400 to-yellow-500', 
+  'March': 'from-green-500 to-green-600',
+  'April': 'from-cyan-400 to-cyan-500',
+  'May': 'from-pink-400 to-pink-500',
+  'June': 'from-blue-500 to-blue-600',
+  'July': 'from-orange-400 to-orange-500',
+  'August': 'from-yellow-400 to-yellow-500',
+  'September': 'from-green-500 to-green-600',
+  'October': 'from-cyan-400 to-cyan-500',
+  'November': 'from-pink-400 to-pink-500',
+  'December': 'from-blue-500 to-blue-600'
 };
 
 const monthAbbr = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
@@ -49,7 +49,7 @@ export default function BirthdayTimeline({ people, onMonthClick, selectedMonth }
           className={`timeline-month bg-gradient-to-r ${monthColors[month as keyof typeof monthColors]} h-16 flex items-center justify-center font-semibold text-sm cursor-pointer ${isSelected ? 'ring-2 ring-rose-400' : ''}`}
           onClick={() => onMonthClick(month)}
         >
-          <span className="text-rose-800">
+          <span className="text-white font-bold drop-shadow-sm">
             {monthAbbr[monthIndex]}
           </span>
           {count > 0 && (

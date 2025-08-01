@@ -9,7 +9,20 @@ interface BirthdayCardProps {
 }
 
 // Clean minimal design - all months use the same subtle rose accent
-const monthColors = 'from-rose-200 to-rose-300';
+const monthColors = {
+  'January': 'from-orange-400 to-orange-500',
+  'February': 'from-yellow-400 to-yellow-500', 
+  'March': 'from-green-500 to-green-600',
+  'April': 'from-cyan-400 to-cyan-500',
+  'May': 'from-pink-400 to-pink-500',
+  'June': 'from-blue-500 to-blue-600',
+  'July': 'from-orange-400 to-orange-500',
+  'August': 'from-yellow-400 to-yellow-500',
+  'September': 'from-green-500 to-green-600',
+  'October': 'from-cyan-400 to-cyan-500',
+  'November': 'from-pink-400 to-pink-500',
+  'December': 'from-blue-500 to-blue-600'
+};
 
 export default function BirthdayCard({ person, onEdit, onDelete }: BirthdayCardProps) {
   if (!person.month || !person.day) return null;
@@ -20,7 +33,7 @@ export default function BirthdayCard({ person, onEdit, onDelete }: BirthdayCardP
 
   return (
     <div className="bg-card border border-border rounded-xl p-6 hover:shadow-md card-hover transition-all">
-      <div className={`bg-gradient-to-r ${monthColors} h-2 rounded-full mb-4`}></div>
+      <div className={`bg-gradient-to-r ${monthColors[person.month as keyof typeof monthColors] || 'from-gray-400 to-gray-500'} h-2 rounded-full mb-4`}></div>
       <div className="flex justify-between items-start mb-3">
         <div>
           <h3 className="text-lg font-semibold text-foreground">
