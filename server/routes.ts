@@ -5,7 +5,7 @@ import { insertPersonSchema } from "@shared/schema";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  
+
   // Get all people
   app.get("/api/people", async (req, res) => {
     try {
@@ -80,7 +80,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!Array.isArray(people)) {
         return res.status(400).json({ message: "Invalid data format" });
       }
-      
+
       const validatedPeople = people.map(person => insertPersonSchema.parse(person));
       const importedPeople = await storage.importPeople(validatedPeople);
       res.status(201).json(importedPeople);
@@ -89,6 +89,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Invalid data", errors: error.errors });
       }
       res.status(500).json({ message: "Failed to import people" });
+    }
+  });
+
+  // Family tree endpoints
+  app.get("/api/family-tree", async (req, res) => {
+    try {
+      const familyTree = await storage.getFamilyTree();
+      res.json(familyTree);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch family tree" });
+    }
+  });
+
+  app.post("/api/family-tree", async (req, res) => {
+    try {
+      const familyTree = await storage.saveFamilyTree(req.body);
+      res.json(familyTree);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to save family tree" });
     }
   });
 

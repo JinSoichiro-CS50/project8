@@ -12,6 +12,7 @@ export interface IStorage {
 
 export class MemStorage implements IStorage {
   private people: Map<string, Person>;
+  private familyTreeData: any = { nodes: [], relationships: [] };
 
   constructor() {
     this.people = new Map();
@@ -100,7 +101,7 @@ export class MemStorage implements IStorage {
 
   async importPeople(peopleToImport: InsertPerson[]): Promise<Person[]> {
     const importedPeople: Person[] = [];
-    
+
     peopleToImport.forEach(person => {
       const id = randomUUID();
       const newPerson: Person = {
@@ -114,8 +115,17 @@ export class MemStorage implements IStorage {
       this.people.set(id, newPerson);
       importedPeople.push(newPerson);
     });
-    
+
     return importedPeople;
+  }
+
+  async getFamilyTree(): Promise<any> {
+    return this.familyTreeData;
+  }
+
+  async saveFamilyTree(data: any): Promise<any> {
+    this.familyTreeData = data;
+    return data;
   }
 }
 
