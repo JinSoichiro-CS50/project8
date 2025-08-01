@@ -7,18 +7,18 @@ interface BirthdayTimelineProps {
 }
 
 const monthColors = {
-  'January': 'from-orange-400 to-orange-500',
-  'February': 'from-yellow-400 to-yellow-500', 
-  'March': 'from-green-500 to-green-600',
-  'April': 'from-cyan-400 to-cyan-500',
-  'May': 'from-pink-400 to-pink-500',
-  'June': 'from-blue-500 to-blue-600',
-  'July': 'from-orange-400 to-orange-500',
-  'August': 'from-yellow-400 to-yellow-500',
-  'September': 'from-green-500 to-green-600',
-  'October': 'from-cyan-400 to-cyan-500',
-  'November': 'from-pink-400 to-pink-500',
-  'December': 'from-blue-500 to-blue-600'
+  'January': 'bg-[#FF8C42]',      // Orange
+  'February': 'bg-[#FFD93D]',     // Yellow
+  'March': 'bg-[#A4B86A]',        // Olive Green
+  'April': 'bg-[#6ECEB2]',        // Cyan
+  'May': 'bg-[#EE6C9D]',          // Pink
+  'June': 'bg-[#3AA9DB]',         // Blue
+  'July': 'bg-[#FF8C42]',         // Orange (repeat)
+  'August': 'bg-[#FFD93D]',       // Yellow (repeat)
+  'September': 'bg-[#A4B86A]',    // Olive Green (repeat)
+  'October': 'bg-[#6ECEB2]',      // Cyan (repeat)
+  'November': 'bg-[#EE6C9D]',     // Pink (repeat)
+  'December': 'bg-[#3AA9DB]'      // Blue (repeat)
 };
 
 const monthAbbr = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
@@ -46,7 +46,7 @@ export default function BirthdayTimeline({ people, onMonthClick, selectedMonth }
     return (
       <div key={month} className="relative">
         <div 
-          className={`timeline-month bg-gradient-to-r ${monthColors[month as keyof typeof monthColors]} h-16 flex items-center justify-center font-semibold text-sm cursor-pointer ${isSelected ? 'ring-2 ring-rose-400' : ''}`}
+          className={`timeline-month ${monthColors[month as keyof typeof monthColors]} h-16 flex items-center justify-center font-semibold text-sm cursor-pointer ${isSelected ? 'ring-2 ring-rose-400' : ''}`}
           onClick={() => onMonthClick(month)}
         >
           <span className="text-white font-bold drop-shadow-sm">
