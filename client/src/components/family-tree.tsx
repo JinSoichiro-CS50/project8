@@ -296,7 +296,7 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
             minHeight: '200%'
           }}
           viewBox={`${-pan.x / zoom} ${-pan.y / zoom} ${1600 / zoom} ${1600 / zoom}`}
-        ></svg>
+        >
           {/* Connections */}
           {renderConnections()}
 
