@@ -1,5 +1,14 @@
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useState } from 'react';
+import { Search } from 'lucide-react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { BirthdayTimeline } from '@/components/birthday-timeline';
+import { BirthdayCard } from '@/components/birthday-card';
+import { PersonModal } from '@/components/person-modal';
+import { StatsSection } from '@/components/stats-section';
+import { ThemeToggle } from '@/components/theme-toggle';
+import type { Person } from '@shared/schema';
 import { Person } from "@shared/schema";
 import BirthdayTimeline from "@/components/birthday-timeline";
 import BirthdayCard from "@/components/birthday-card";
@@ -72,7 +81,8 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background text-foreground">
+      <ThemeToggle />
       {/* Header */}
       <header className="bg-white bg-opacity-80 backdrop-blur-sm border-b border-border shadow-sm">
         <div className="container mx-auto px-4 py-6">
@@ -154,7 +164,7 @@ export default function Home() {
         onOpenChange={setIsPersonModalOpen}
         person={editingPerson}
       />
-      
+
       <DeleteModal 
         open={isDeleteModalOpen}
         onOpenChange={setIsDeleteModalOpen}
