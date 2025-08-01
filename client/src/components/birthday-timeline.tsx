@@ -53,9 +53,9 @@ export default function BirthdayTimeline({ people, onMonthClick, selectedMonth }
             {monthAbbr[monthIndex]}
           </span>
           {count > 0 && (
-            <div className={`absolute ${isTopRow ? '-bottom-2' : '-top-2'} left-1/2 transform -translate-x-1/2`}>
-              <div className="w-5 h-5 bg-rose-500 rounded-full flex items-center justify-center birthday-indicator border-2 border-white shadow-sm">
-                <span className="text-xs font-bold text-white">{count}</span>
+            <div className={`absolute ${isTopRow ? '-bottom-3' : '-top-3'} left-1/2 transform -translate-x-1/2 z-10`}>
+              <div className="w-6 h-6 bg-rose-500 rounded-full flex items-center justify-center birthday-indicator border-2 border-white shadow-sm">
+                <span className="text-xs font-bold text-white leading-none">{count}</span>
               </div>
             </div>
           )}
