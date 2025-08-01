@@ -7,6 +7,21 @@ import { useToast } from '@/hooks/use-toast';
 import { Plus, Minus, Save, Users, Link, Trash2, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
+const monthColors = {
+  'January': '#FF8C42',      // Orange
+  'February': '#FFD93D',     // Yellow
+  'March': '#A4B86A',        // Olive Green
+  'April': '#6ECEB2',        // Cyan
+  'May': '#EE6C9D',          // Pink
+  'June': '#3AA9DB',         // Blue
+  'July': '#FF8C42',         // Orange (repeat)
+  'August': '#FFD93D',       // Yellow (repeat)
+  'September': '#A4B86A',    // Olive Green (repeat)
+  'October': '#6ECEB2',      // Cyan (repeat)
+  'November': '#EE6C9D',     // Pink (repeat)
+  'December': '#3AA9DB'      // Blue (repeat)
+};
+
 interface Position {
   x: number;
   y: number;
@@ -142,6 +157,11 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
     return `${month} ${person.day}${person.year ? `, ${person.year}` : ''}`;
   };
 
+  const getPersonBorderColor = (person: PersonNode) => {
+    if (!person.month) return '#d1d5db';
+    return monthColors[person.month as keyof typeof monthColors] || '#d1d5db';
+  };
+
   const renderConnections = () => {
     return connections.map(conn => {
       const fromNode = nodes.find(n => n.id === conn.fromPersonId);
@@ -149,18 +169,39 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
       
       if (!fromNode || !toNode) return null;
 
+      // Calculate connection points for profile pictures
+      const fromX = fromNode.position.x;
+      const fromY = fromNode.position.y;
+      const toX = toNode.position.x;
+      const toY = toNode.position.y;
+
+      // Create a path for the connection line
+      const midY = (fromY + toY) / 2;
+      
       return (
-        <line
-          key={conn.id}
-          x1={fromNode.position.x}
-          y1={fromNode.position.y + 60}
-          x2={toNode.position.x}
-          y2={toNode.position.y + 60}
-          stroke="#8b7355"
-          strokeWidth="3"
-          className="cursor-pointer hover:stroke-red-500"
-          onClick={() => deleteConnection(conn.id)}
-        />
+        <g key={conn.id}>
+          <path
+            d={`M ${fromX} ${fromY} L ${fromX} ${midY} L ${toX} ${midY} L ${toX} ${toY}`}
+            stroke="#8b7355"
+            strokeWidth="2"
+            fill="none"
+            className="cursor-pointer hover:stroke-red-500"
+            onClick={() => deleteConnection(conn.id)}
+          />
+          {/* Connection endpoints */}
+          <circle
+            cx={fromX}
+            cy={fromY}
+            r="3"
+            fill="#8b7355"
+          />
+          <circle
+            cx={toX}
+            cy={toY}
+            r="3"
+            fill="#8b7355"
+          />
+        </g>
       );
     });
   };
@@ -217,7 +258,7 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
       )}
 
       {/* Family Tree Canvas */}
-      <div className="relative w-full h-[600px] overflow-hidden">
+      <div className="relative w-full h-[600px] overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
         <svg
           ref={svgRef}
           className="w-full h-full cursor-move"
@@ -230,79 +271,111 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
           {renderConnections()}
 
           {/* Person Nodes */}
-          {nodes.map(node => (
-            <g key={node.id}>
-              {/* Person Card Background */}
-              <rect
-                x={node.position.x - 80}
-                y={node.position.y - 60}
-                width="160"
-                height="120"
-                fill={selectedPerson === node.id ? '#dbeafe' : '#ffffff'}
-                stroke={selectedPerson === node.id ? '#3b82f6' : '#e5e7eb'}
-                strokeWidth="2"
-                rx="8"
-                className="cursor-pointer hover:stroke-primary drop-shadow-md"
-                onMouseDown={(e) => handleMouseDown(e, node.id)}
-              />
-              
-              {/* Profile Picture */}
-              {node.profilePicture ? (
-                <image
-                  x={node.position.x - 25}
-                  y={node.position.y - 45}
-                  width="50"
-                  height="50"
-                  href={node.profilePicture}
-                  className="rounded-full cursor-pointer"
-                  clipPath="circle(25px at 25px 25px)"
-                  onClick={() => fileInputRef.current?.click()}
+          {nodes.map(node => {
+            const borderColor = getPersonBorderColor(node);
+            return (
+              <g key={node.id}>
+                {/* Invisible interaction area */}
+                <rect
+                  x={node.position.x - 60}
+                  y={node.position.y - 60}
+                  width="120"
+                  height="140"
+                  fill="transparent"
+                  className="cursor-pointer"
+                  onMouseDown={(e) => handleMouseDown(e, node.id)}
                 />
-              ) : (
+                
+                {/* Profile Picture with colored border */}
+                <defs>
+                  <clipPath id={`clip-${node.id}`}>
+                    <circle cx={node.position.x} cy={node.position.y} r="35" />
+                  </clipPath>
+                </defs>
+                
+                {/* Colored border ring */}
                 <circle
                   cx={node.position.x}
-                  cy={node.position.y - 20}
-                  r="25"
-                  fill="#f3f4f6"
-                  stroke="#d1d5db"
+                  cy={node.position.y}
+                  r="40"
+                  fill="none"
+                  stroke={borderColor}
+                  strokeWidth="6"
+                  className={selectedPerson === node.id ? 'opacity-100' : 'opacity-80'}
+                />
+                
+                {/* Inner white ring */}
+                <circle
+                  cx={node.position.x}
+                  cy={node.position.y}
+                  r="37"
+                  fill="none"
+                  stroke="white"
                   strokeWidth="2"
-                  className="cursor-pointer hover:fill-gray-200"
-                  onClick={() => fileInputRef.current?.click()}
                 />
-              )}
+                
+                {/* Profile Picture or placeholder */}
+                {node.profilePicture ? (
+                  <image
+                    x={node.position.x - 35}
+                    y={node.position.y - 35}
+                    width="70"
+                    height="70"
+                    href={node.profilePicture}
+                    clipPath={`url(#clip-${node.id})`}
+                    className="cursor-pointer"
+                    onClick={() => {
+                      setSelectedPerson(node.id);
+                      fileInputRef.current?.click();
+                    }}
+                  />
+                ) : (
+                  <>
+                    <circle
+                      cx={node.position.x}
+                      cy={node.position.y}
+                      r="35"
+                      fill="#f8f8f8"
+                      className="cursor-pointer hover:fill-gray-100"
+                      onClick={() => {
+                        setSelectedPerson(node.id);
+                        fileInputRef.current?.click();
+                      }}
+                    />
+                    <Upload
+                      x={node.position.x - 12}
+                      y={node.position.y - 12}
+                      width="24"
+                      height="24"
+                      className="fill-gray-400 pointer-events-none"
+                    />
+                  </>
+                )}
 
-              {/* Name */}
-              <text
-                x={node.position.x}
-                y={node.position.y + 15}
-                textAnchor="middle"
-                className="text-base font-bold fill-gray-800 pointer-events-none"
-              >
-                {node.firstName} {node.lastName}
-              </text>
-              
-              {/* Birthday */}
-              <text
-                x={node.position.x}
-                y={node.position.y + 35}
-                textAnchor="middle"
-                className="text-sm fill-gray-600 pointer-events-none"
-              >
-                {formatBirthday(node)}
-              </text>
-
-              {/* Upload icon for profile picture */}
-              {!node.profilePicture && (
-                <Upload
-                  x={node.position.x - 8}
-                  y={node.position.y - 28}
-                  width="16"
-                  height="16"
-                  className="fill-gray-400 pointer-events-none"
-                />
-              )}
-            </g>
-          ))}
+                {/* Name */}
+                <text
+                  x={node.position.x}
+                  y={node.position.y + 55}
+                  textAnchor="middle"
+                  className="text-sm font-bold fill-gray-800 pointer-events-none"
+                  style={{ fontSize: '14px' }}
+                >
+                  {node.firstName} {node.lastName}
+                </text>
+                
+                {/* Title/Role (you can customize this) */}
+                <text
+                  x={node.position.x}
+                  y={node.position.y + 72}
+                  textAnchor="middle"
+                  className="text-xs fill-gray-600 pointer-events-none"
+                  style={{ fontSize: '11px' }}
+                >
+                  {formatBirthday(node)}
+                </text>
+              </g>
+            );
+          })}
         </svg>
 
         {/* Hidden file input for profile pictures */}
@@ -316,6 +389,7 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
             if (file && selectedPerson) {
               handleProfilePictureUpload(selectedPerson, file);
             }
+            e.target.value = ''; // Reset input
           }}
         />
       </div>
