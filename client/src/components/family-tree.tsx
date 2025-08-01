@@ -4,7 +4,7 @@ import { Person } from '@shared/schema';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
-import { Plus, Minus, Save, Users, Link, Trash2, Upload } from 'lucide-react';
+import { Plus, Minus, Users, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const monthColors = {
@@ -30,12 +30,15 @@ interface Position {
 interface PersonNode extends Person {
   position: Position;
   profilePicture?: string;
+  generation: number;
+  familyGroup: string;
 }
 
 interface Connection {
   id: string;
   fromPersonId: string;
   toPersonId: string;
+  type: 'spouse' | 'parent-child';
 }
 
 interface FamilyTreeProps {
@@ -54,17 +57,160 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
   const [panStart, setPanStart] = useState<Position>({ x: 0, y: 0 });
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Initialize nodes with default positions
+  // Initialize nodes with structured positions based on family relationships
   useEffect(() => {
-    const initialNodes: PersonNode[] = people.map((person, index) => ({
-      ...person,
-      position: {
-        x: 200 + (index % 5) * 250,
-        y: 150 + Math.floor(index / 5) * 200
-      }
-    }));
-    setNodes(initialNodes);
+    const familyStructure = createFamilyStructure(people);
+    setNodes(familyStructure.nodes);
+    setConnections(familyStructure.connections);
   }, [people]);
+
+  const createFamilyStructure = (people: Person[]) => {
+    const findPersonByName = (firstName: string, lastName: string) => {
+      return people.find(p => p.firstName === firstName && p.lastName === lastName);
+    };
+
+    // Define family structure based on CSV data
+    const families = [
+      {
+        name: 'Sevilla',
+        parents: [
+          { firstName: 'Robert', lastName: 'Sevilla' },
+          { firstName: 'Imelda', lastName: 'Sevilla' }
+        ],
+        children: [
+          { firstName: 'Patricia', lastName: 'Kuo' },
+          { firstName: 'Rap', lastName: 'Sevilla' },
+          { firstName: 'Colleen', lastName: 'Sevilla' }
+        ],
+        startX: 100
+      },
+      {
+        name: 'De Guzman',
+        parents: [
+          { firstName: 'Egay', lastName: 'De Guzman' },
+          { firstName: 'Oyang', lastName: 'De Guzman' }
+        ],
+        children: [
+          { firstName: 'Daniel', lastName: 'De Guzman' },
+          { firstName: 'Ryan', lastName: 'De Guzman' },
+          { firstName: 'Eric', lastName: 'De Guzman' },
+          { firstName: 'Nat', lastName: 'De Guzman' }
+        ],
+        startX: 600
+      },
+      {
+        name: 'Tiongson',
+        parents: [
+          { firstName: 'Nestor', lastName: 'Tiongson' },
+          { firstName: 'Ruby', lastName: 'Tiongson' }
+        ],
+        children: [
+          { firstName: 'Candice', lastName: 'Tiongson' },
+          { firstName: 'Caitlin', lastName: 'Tiongson' },
+          { firstName: 'Adrian', lastName: 'Tiongson' }
+        ],
+        startX: 1100
+      },
+      {
+        name: 'Mejia',
+        parents: [
+          { firstName: 'Aida', lastName: 'Mejia' }
+        ],
+        children: [
+          { firstName: 'Mark', lastName: 'Mejia' },
+          { firstName: 'Michael', lastName: 'Mejia' }
+        ],
+        startX: 1500
+      }
+    ];
+
+    const nodes: PersonNode[] = [];
+    const connections: Connection[] = [];
+    let connectionId = 0;
+
+    families.forEach((family, familyIndex) => {
+      const baseY = 150;
+      const parentY = baseY;
+      const childY = baseY + 200;
+
+      // Add parents
+      family.parents.forEach((parentInfo, parentIndex) => {
+        const person = findPersonByName(parentInfo.firstName, parentInfo.lastName);
+        if (person) {
+          nodes.push({
+            ...person,
+            position: {
+              x: family.startX + (parentIndex * 150),
+              y: parentY
+            },
+            generation: 0,
+            familyGroup: family.name
+          });
+        }
+      });
+
+      // Add spouse connection if two parents
+      if (family.parents.length === 2) {
+        const parent1 = findPersonByName(family.parents[0].firstName, family.parents[0].lastName);
+        const parent2 = findPersonByName(family.parents[1].firstName, family.parents[1].lastName);
+        if (parent1 && parent2) {
+          connections.push({
+            id: `spouse-${connectionId++}`,
+            fromPersonId: parent1.id,
+            toPersonId: parent2.id,
+            type: 'spouse'
+          });
+        }
+      }
+
+      // Add children
+      family.children.forEach((childInfo, childIndex) => {
+        const person = findPersonByName(childInfo.firstName, childInfo.lastName);
+        if (person) {
+          nodes.push({
+            ...person,
+            position: {
+              x: family.startX + (childIndex * 120) - 50,
+              y: childY
+            },
+            generation: 1,
+            familyGroup: family.name
+          });
+
+          // Connect children to parents
+          family.parents.forEach(parentInfo => {
+            const parent = findPersonByName(parentInfo.firstName, parentInfo.lastName);
+            if (parent) {
+              connections.push({
+                id: `parent-child-${connectionId++}`,
+                fromPersonId: parent.id,
+                toPersonId: person.id,
+                type: 'parent-child'
+              });
+            }
+          });
+        }
+      });
+    });
+
+    // Add remaining people who don't fit in the main families
+    const assignedPeople = new Set(nodes.map(n => n.id));
+    const remainingPeople = people.filter(p => !assignedPeople.has(p.id));
+    
+    remainingPeople.forEach((person, index) => {
+      nodes.push({
+        ...person,
+        position: {
+          x: 200 + (index % 4) * 150,
+          y: 450 + Math.floor(index / 4) * 150
+        },
+        generation: 2,
+        familyGroup: 'Other'
+      });
+    });
+
+    return { nodes, connections };
+  };
 
   const handleMouseDown = useCallback((e: React.MouseEvent, nodeId: string) => {
     e.preventDefault();
@@ -147,7 +293,59 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
     return monthColors[person.month as keyof typeof monthColors] || '#d1d5db';
   };
 
-  
+  const renderConnection = (connection: Connection) => {
+    const fromNode = nodes.find(n => n.id === connection.fromPersonId);
+    const toNode = nodes.find(n => n.id === connection.toPersonId);
+    
+    if (!fromNode || !toNode) return null;
+
+    if (connection.type === 'spouse') {
+      // Horizontal line for spouses
+      return (
+        <line
+          key={connection.id}
+          x1={fromNode.position.x + 40}
+          y1={fromNode.position.y}
+          x2={toNode.position.x - 40}
+          y2={toNode.position.y}
+          stroke="#94a3b8"
+          strokeWidth="2"
+          strokeDasharray="5,5"
+        />
+      );
+    } else if (connection.type === 'parent-child') {
+      // L-shaped line for parent-child
+      const midY = fromNode.position.y + 50;
+      return (
+        <g key={connection.id}>
+          <line
+            x1={fromNode.position.x}
+            y1={fromNode.position.y + 40}
+            x2={fromNode.position.x}
+            y2={midY}
+            stroke="#94a3b8"
+            strokeWidth="2"
+          />
+          <line
+            x1={fromNode.position.x}
+            y1={midY}
+            x2={toNode.position.x}
+            y2={midY}
+            stroke="#94a3b8"
+            strokeWidth="2"
+          />
+          <line
+            x1={toNode.position.x}
+            y1={midY}
+            x2={toNode.position.x}
+            y2={toNode.position.y - 40}
+            stroke="#94a3b8"
+            strokeWidth="2"
+          />
+        </g>
+      );
+    }
+  };
 
   return (
     <div className="w-full h-full bg-background border border-border rounded-lg overflow-hidden">
@@ -176,7 +374,7 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
       </div>
 
       {/* Family Tree Canvas */}
-      <div className="relative w-full h-[800px] overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
+      <div className="relative w-full h-[800px] overflow-hidden bg-gray-100">
         <svg
           ref={svgRef}
           className={`w-full h-full ${isPanning ? 'cursor-grabbing' : 'cursor-grab'}`}
@@ -189,8 +387,11 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
             minWidth: '200%',
             minHeight: '200%'
           }}
-          viewBox={`${-pan.x / zoom} ${-pan.y / zoom} ${1600 / zoom} ${1600 / zoom}`}
+          viewBox={`${-pan.x / zoom} ${-pan.y / zoom} ${2000 / zoom} ${1200 / zoom}`}
         >
+          {/* Render connections first (behind nodes) */}
+          {connections.map(renderConnection)}
+
           {/* Person Nodes */}
           {nodes.map(node => {
             const borderColor = getPersonBorderColor(node);
@@ -198,10 +399,10 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
               <g key={node.id}>
                 {/* Invisible interaction area */}
                 <rect
-                  x={node.position.x - 60}
-                  y={node.position.y - 60}
-                  width="120"
-                  height="140"
+                  x={node.position.x - 50}
+                  y={node.position.y - 50}
+                  width="100"
+                  height="120"
                   fill="transparent"
                   className={`cursor-${draggedNode === node.id ? 'grabbing' : 'grab'}`}
                   onMouseDown={(e) => handleMouseDown(e, node.id)}
@@ -210,7 +411,7 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
                 {/* Profile Picture with colored border */}
                 <defs>
                   <clipPath id={`clip-${node.id}`}>
-                    <circle cx={node.position.x} cy={node.position.y} r="35" />
+                    <circle cx={node.position.x} cy={node.position.y} r="30" />
                   </clipPath>
                 </defs>
                 
@@ -218,10 +419,10 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
                 <circle
                   cx={node.position.x}
                   cy={node.position.y}
-                  r="40"
+                  r="35"
                   fill="none"
                   stroke={borderColor}
-                  strokeWidth="6"
+                  strokeWidth="4"
                   className="opacity-80"
                 />
                 
@@ -229,7 +430,7 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
                 <circle
                   cx={node.position.x}
                   cy={node.position.y}
-                  r="37"
+                  r="32"
                   fill="none"
                   stroke="white"
                   strokeWidth="2"
@@ -238,10 +439,10 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
                 {/* Profile Picture or placeholder */}
                 {node.profilePicture ? (
                   <image
-                    x={node.position.x - 35}
-                    y={node.position.y - 35}
-                    width="70"
-                    height="70"
+                    x={node.position.x - 30}
+                    y={node.position.y - 30}
+                    width="60"
+                    height="60"
                     href={node.profilePicture}
                     clipPath={`url(#clip-${node.id})`}
                     className="cursor-pointer"
@@ -255,7 +456,7 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
                     <circle
                       cx={node.position.x}
                       cy={node.position.y}
-                      r="35"
+                      r="30"
                       fill="#f8f8f8"
                       className="cursor-pointer hover:fill-gray-100"
                       onClick={() => {
@@ -264,10 +465,10 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
                       }}
                     />
                     <Upload
-                      x={node.position.x - 12}
-                      y={node.position.y - 12}
-                      width="24"
-                      height="24"
+                      x={node.position.x - 10}
+                      y={node.position.y - 10}
+                      width="20"
+                      height="20"
                       className="fill-gray-400 pointer-events-none"
                     />
                   </>
@@ -276,21 +477,30 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
                 {/* Name */}
                 <text
                   x={node.position.x}
-                  y={node.position.y + 55}
+                  y={node.position.y + 48}
                   textAnchor="middle"
                   className="text-sm font-bold fill-gray-800 pointer-events-none"
-                  style={{ fontSize: '14px' }}
+                  style={{ fontSize: '12px' }}
                 >
-                  {node.firstName} {node.lastName}
+                  {node.firstName}
                 </text>
-                
-                {/* Title/Role (you can customize this) */}
                 <text
                   x={node.position.x}
-                  y={node.position.y + 72}
+                  y={node.position.y + 62}
+                  textAnchor="middle"
+                  className="text-sm font-bold fill-gray-800 pointer-events-none"
+                  style={{ fontSize: '12px' }}
+                >
+                  {node.lastName}
+                </text>
+                
+                {/* Birthday */}
+                <text
+                  x={node.position.x}
+                  y={node.position.y + 76}
                   textAnchor="middle"
                   className="text-xs fill-gray-600 pointer-events-none"
-                  style={{ fontSize: '11px' }}
+                  style={{ fontSize: '10px' }}
                 >
                   {formatBirthday(node)}
                 </text>
@@ -314,8 +524,6 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
           }}
         />
       </div>
-
-      
     </div>
   );
 }
