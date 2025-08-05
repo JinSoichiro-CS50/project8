@@ -62,108 +62,107 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
       return people.find(p => p.firstName === firstName && p.lastName === lastName);
     };
 
-    // Define family structure with proper hierarchical levels
-    // Level 0: Grandparents generation
-    // Level 1: Parents generation  
-    // Level 2: Children generation
-    // Level 3: Grandchildren generation
+    // Define family structure with proper spacing to avoid overlaps
+    // Level 0: Grandparents generation (y: 100)
+    // Level 1: Parents generation (y: 350)
+    // Level 2: Children generation (y: 600)
     
     const families = [
       {
         name: 'Sevilla',
         parents: [
-          { firstName: 'Robert', lastName: 'Sevilla', x: 150, y: 100 },
-          { firstName: 'Imelda', lastName: 'Sevilla', x: 300, y: 100 }
+          { firstName: 'Robert', lastName: 'Sevilla', x: 200, y: 100 },
+          { firstName: 'Imelda', lastName: 'Sevilla', x: 350, y: 100 }
         ],
         children: [
-          { firstName: 'Patricia', lastName: 'Kuo', x: 50, y: 300 },
-          { firstName: 'Rap', lastName: 'Sevilla', x: 225, y: 300 },
-          { firstName: 'Colleen', lastName: 'Sevilla', x: 400, y: 300 }
+          { firstName: 'Patricia', lastName: 'Kuo', x: 100, y: 350 },
+          { firstName: 'Rap', lastName: 'Sevilla', x: 275, y: 350 },
+          { firstName: 'Colleen', lastName: 'Sevilla', x: 450, y: 350 }
         ]
       },
       {
         name: 'De Guzman',
         parents: [
-          { firstName: 'Egay', lastName: 'De Guzman', x: 600, y: 100 },
-          { firstName: 'Oyang', lastName: 'De Guzman', x: 750, y: 100 }
+          { firstName: 'Egay', lastName: 'De Guzman', x: 650, y: 100 },
+          { firstName: 'Oyang', lastName: 'De Guzman', x: 800, y: 100 }
         ],
         children: [
-          { firstName: 'Daniel', lastName: 'De Guzman', x: 500, y: 300 },
-          { firstName: 'Ryan', lastName: 'De Guzman', x: 600, y: 300 },
-          { firstName: 'Eric', lastName: 'De Guzman', x: 700, y: 300 },
-          { firstName: 'Nat', lastName: 'De Guzman', x: 800, y: 300 }
+          { firstName: 'Daniel', lastName: 'De Guzman', x: 550, y: 350 },
+          { firstName: 'Ryan', lastName: 'De Guzman', x: 650, y: 350 },
+          { firstName: 'Eric', lastName: 'De Guzman', x: 750, y: 350 },
+          { firstName: 'Nat', lastName: 'De Guzman', x: 850, y: 350 }
         ]
       },
       {
         name: 'Tiongson',
         parents: [
-          { firstName: 'Nestor', lastName: 'Tiongson', x: 1000, y: 100 },
-          { firstName: 'Ruby', lastName: 'Tiongson', x: 1150, y: 100 }
+          { firstName: 'Nestor', lastName: 'Tiongson', x: 1100, y: 100 },
+          { firstName: 'Ruby', lastName: 'Tiongson', x: 1250, y: 100 }
         ],
         children: [
-          { firstName: 'Candice', lastName: 'Tiongson', x: 950, y: 300 },
-          { firstName: 'Caitlin', lastName: 'Tiongson', x: 1075, y: 300 },
-          { firstName: 'Adrian', lastName: 'Tiongson', x: 1200, y: 300 }
+          { firstName: 'Candice', lastName: 'Tiongson', x: 1000, y: 350 },
+          { firstName: 'Caitlin', lastName: 'Tiongson', x: 1175, y: 350 },
+          { firstName: 'Adrian', lastName: 'Tiongson', x: 1350, y: 350 }
         ]
       },
       {
         name: 'Mejia',
         parents: [
-          { firstName: 'Aida', lastName: 'Mejia', x: 1400, y: 100 }
+          { firstName: 'Aida', lastName: 'Mejia', x: 1550, y: 100 }
         ],
         children: [
-          { firstName: 'Boss', lastName: 'Mejia', x: 1300, y: 300 },
-          { firstName: 'Michael', lastName: 'Mejia', x: 1400, y: 300 },
-          { firstName: 'Angel', lastName: 'Porto', x: 1500, y: 300 },
-          { firstName: 'Mark', lastName: 'Mejia', x: 1600, y: 300 }
+          { firstName: 'Boss', lastName: 'Mejia', x: 1450, y: 350 },
+          { firstName: 'Michael', lastName: 'Mejia', x: 1550, y: 350 },
+          { firstName: 'Angel', lastName: 'Porto', x: 1650, y: 350 },
+          { firstName: 'Mark', lastName: 'Mejia', x: 1750, y: 350 }
         ]
       }
     ];
 
-    // Define married couples at the same level (Level 1 - Parents generation)
+    // Define married couples with proper spacing
     const marriedCouples = [
       {
         name: 'Kuo',
         parents: [
-          { firstName: 'Steven', lastName: 'Kuo', x: 50, y: 300 },  // Same level as Patricia
-          { firstName: 'Patricia', lastName: 'Kuo', x: 50, y: 300 } // Already positioned above
+          { firstName: 'Steven', lastName: 'Kuo', x: 200, y: 350 },
+          { firstName: 'Patricia', lastName: 'Kuo', x: 100, y: 350 } // Reference to existing Patricia
         ],
         children: []
       },
       {
         name: 'Sevilla-Couple',
         parents: [
-          { firstName: 'Rap', lastName: 'Sevilla', x: 225, y: 300 }, // Already positioned above
-          { firstName: 'Alex', lastName: 'Sevilla', x: 375, y: 300 }  // Same level as Rap
+          { firstName: 'Rap', lastName: 'Sevilla', x: 275, y: 350 }, // Reference to existing Rap
+          { firstName: 'Alex', lastName: 'Sevilla', x: 375, y: 350 }
         ],
         children: []
       },
       {
         name: 'Porto',
         parents: [
-          { firstName: 'Toper', lastName: 'Porto', x: 1650, y: 300 },
-          { firstName: 'Angel', lastName: 'Porto', x: 1500, y: 300 } // Already positioned above
+          { firstName: 'Toper', lastName: 'Porto', x: 1750, y: 350 },
+          { firstName: 'Angel', lastName: 'Porto', x: 1650, y: 350 } // Reference to existing Angel
         ],
         children: [
-          { firstName: 'Tala', lastName: 'Porto', x: 1550, y: 500 },
-          { firstName: 'Alon', lastName: 'Porto', x: 1650, y: 500 }
+          { firstName: 'Tala', lastName: 'Porto', x: 1650, y: 600 },
+          { firstName: 'Alon', lastName: 'Porto', x: 1750, y: 600 }
         ]
       },
       {
         name: 'De Guzman-Ryan',
         parents: [
-          { firstName: 'Ryan', lastName: 'De Guzman', x: 600, y: 300 }, // Already positioned above
-          { firstName: 'Sharmain', lastName: 'De Guzman', x: 750, y: 300 }  // Same level as Ryan
+          { firstName: 'Ryan', lastName: 'De Guzman', x: 650, y: 350 }, // Reference to existing Ryan
+          { firstName: 'Sharmain', lastName: 'De Guzman', x: 750, y: 350 }
         ],
         children: [
-          { firstName: 'Aiyan', lastName: 'De Guzman', x: 675, y: 500 }
+          { firstName: 'Aiyan', lastName: 'De Guzman', x: 700, y: 600 }
         ]
       },
       {
         name: 'De Guzman-Eric',
         parents: [
-          { firstName: 'Eric', lastName: 'De Guzman', x: 700, y: 300 }, // Already positioned above
-          { firstName: 'Jackie', lastName: 'De Guzman', x: 850, y: 300 }  // Same level as Eric
+          { firstName: 'Eric', lastName: 'De Guzman', x: 750, y: 350 }, // Reference to existing Eric
+          { firstName: 'Jackie', lastName: 'De Guzman', x: 850, y: 350 }
         ],
         children: []
       }
@@ -218,85 +217,60 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
         }
       }
 
-      // Create parent-child connections with fork structure
+      // Create T-shaped parent-child connections
       if (family.children.length > 0) {
-        const parentIds = family.parents
-          .map(p => findPersonByName(p.firstName, p.lastName))
-          .filter(Boolean)
-          .map(p => p!.id);
+        const parentCenterX = family.parents.length === 2 
+          ? (family.parents[0].x + family.parents[1].x) / 2
+          : family.parents[0].x;
+        const parentY = family.parents[0].y;
+        
+        const minChildX = Math.min(...family.children.map(c => c.x));
+        const maxChildX = Math.max(...family.children.map(c => c.x));
+        const childY = family.children[0].y;
+        
+        const verticalLineY = parentY + 80; // Vertical line down from parents
+        const horizontalLineY = childY - 80; // Horizontal line above children
 
-        const childIds = family.children
-          .map(c => findPersonByName(c.firstName, c.lastName))
-          .filter(Boolean)
-          .map(c => c!.id);
+        // 1. Vertical line from parent center down
+        connections.push({
+          id: `family-vertical-${connectionId++}`,
+          fromPersonId: `vertical-${family.name}`,
+          toPersonId: `vertical-${family.name}`,
+          type: 'family-line',
+          points: [
+            { x: parentCenterX, y: parentY + 35 },
+            { x: parentCenterX, y: horizontalLineY }
+          ]
+        });
 
-        if (parentIds.length > 0 && childIds.length > 0) {
-          // Calculate positions for fork structure
-          const parentCenterX = family.parents.length === 2 
-            ? (family.parents[0].x + family.parents[1].x) / 2
-            : family.parents[0].x;
-          const parentY = family.parents[0].y;
-          
-          const minChildX = Math.min(...family.children.map(c => c.x));
-          const maxChildX = Math.max(...family.children.map(c => c.x));
-          const childY = family.children[0].y;
-          
-          const forkY = parentY + (childY - parentY) / 2; // Midpoint between parents and children
-          const childHorizontalY = childY - 50; // Horizontal line above children
+        // 2. Horizontal line connecting all children positions
+        connections.push({
+          id: `family-horizontal-${connectionId++}`,
+          fromPersonId: `horizontal-${family.name}`,
+          toPersonId: `horizontal-${family.name}`,
+          type: 'family-line',
+          points: [
+            { x: minChildX, y: horizontalLineY },
+            { x: maxChildX, y: horizontalLineY }
+          ]
+        });
 
-          // 1. Vertical line from parent center down to fork point
-          connections.push({
-            id: `family-parent-line-${connectionId++}`,
-            fromPersonId: 'parent-center',
-            toPersonId: 'fork-point',
-            type: 'family-line',
-            points: [
-              { x: parentCenterX, y: parentY + 35 },
-              { x: parentCenterX, y: forkY }
-            ]
-          });
-
-          // 2. Horizontal line from fork point to children area
-          connections.push({
-            id: `family-horizontal-${connectionId++}`,
-            fromPersonId: 'fork-point',
-            toPersonId: 'children-horizontal',
-            type: 'family-line',
-            points: [
-              { x: parentCenterX, y: forkY },
-              { x: (minChildX + maxChildX) / 2, y: childHorizontalY }
-            ]
-          });
-
-          // 3. Horizontal line connecting all children
-          connections.push({
-            id: `family-children-horizontal-${connectionId++}`,
-            fromPersonId: 'children-horizontal',
-            toPersonId: 'children-horizontal',
-            type: 'family-line',
-            points: [
-              { x: minChildX, y: childHorizontalY },
-              { x: maxChildX, y: childHorizontalY }
-            ]
-          });
-
-          // 4. Vertical lines from horizontal line down to each child
-          family.children.forEach((childInfo, index) => {
-            const child = findPersonByName(childInfo.firstName, childInfo.lastName);
-            if (child) {
-              connections.push({
-                id: `family-child-${connectionId++}`,
-                fromPersonId: 'children-horizontal',
-                toPersonId: child.id,
-                type: 'family-line',
-                points: [
-                  { x: childInfo.x, y: childHorizontalY },
-                  { x: childInfo.x, y: childY - 35 }
-                ]
-              });
-            }
-          });
-        }
+        // 3. Vertical lines from horizontal line down to each child
+        family.children.forEach((childInfo) => {
+          const child = findPersonByName(childInfo.firstName, childInfo.lastName);
+          if (child) {
+            connections.push({
+              id: `family-child-${connectionId++}`,
+              fromPersonId: `child-${child.id}`,
+              toPersonId: child.id,
+              type: 'family-line',
+              points: [
+                { x: childInfo.x, y: horizontalLineY },
+                { x: childInfo.x, y: childY - 35 }
+              ]
+            });
+          }
+        });
       }
     });
 
@@ -344,79 +318,57 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
         }
       }
 
-      // Create parent-child connections for couple's children
+      // Create T-shaped parent-child connections for couple's children
       if (couple.children.length > 0) {
-        const parentIds = couple.parents
-          .map(p => findPersonByName(p.firstName, p.lastName))
-          .filter(Boolean)
-          .map(p => p!.id);
+        const parentCenterX = (couple.parents[0].x + couple.parents[1].x) / 2;
+        const parentY = couple.parents[0].y;
+        
+        const minChildX = Math.min(...couple.children.map(c => c.x));
+        const maxChildX = Math.max(...couple.children.map(c => c.x));
+        const childY = couple.children[0].y;
+        
+        const horizontalLineY = childY - 80; // Horizontal line above children
 
-        const childIds = couple.children
-          .map(c => findPersonByName(c.firstName, c.lastName))
-          .filter(Boolean)
-          .map(c => c!.id);
+        // 1. Vertical line from parent center down
+        connections.push({
+          id: `couple-vertical-${connectionId++}`,
+          fromPersonId: `couple-vertical-${couple.name}`,
+          toPersonId: `couple-vertical-${couple.name}`,
+          type: 'family-line',
+          points: [
+            { x: parentCenterX, y: parentY + 35 },
+            { x: parentCenterX, y: horizontalLineY }
+          ]
+        });
 
-        if (parentIds.length > 0 && childIds.length > 0) {
-          const parentCenterX = (couple.parents[0].x + couple.parents[1].x) / 2;
-          const parentY = couple.parents[0].y;
-          
-          const minChildX = Math.min(...couple.children.map(c => c.x));
-          const maxChildX = Math.max(...couple.children.map(c => c.x));
-          const childY = couple.children[0].y;
-          
-          const forkY = parentY + (childY - parentY) / 2;
-          const childHorizontalY = childY - 50;
+        // 2. Horizontal line connecting all children positions
+        connections.push({
+          id: `couple-horizontal-${connectionId++}`,
+          fromPersonId: `couple-horizontal-${couple.name}`,
+          toPersonId: `couple-horizontal-${couple.name}`,
+          type: 'family-line',
+          points: [
+            { x: minChildX, y: horizontalLineY },
+            { x: maxChildX, y: horizontalLineY }
+          ]
+        });
 
-          // Fork structure for couple's children
-          connections.push({
-            id: `couple-parent-line-${connectionId++}`,
-            fromPersonId: 'couple-parent-center',
-            toPersonId: 'couple-fork-point',
-            type: 'family-line',
-            points: [
-              { x: parentCenterX, y: parentY + 35 },
-              { x: parentCenterX, y: forkY }
-            ]
-          });
-
-          connections.push({
-            id: `couple-horizontal-${connectionId++}`,
-            fromPersonId: 'couple-fork-point',
-            toPersonId: 'couple-children-horizontal',
-            type: 'family-line',
-            points: [
-              { x: parentCenterX, y: forkY },
-              { x: (minChildX + maxChildX) / 2, y: childHorizontalY }
-            ]
-          });
-
-          connections.push({
-            id: `couple-children-horizontal-${connectionId++}`,
-            fromPersonId: 'couple-children-horizontal',
-            toPersonId: 'couple-children-horizontal',
-            type: 'family-line',
-            points: [
-              { x: minChildX, y: childHorizontalY },
-              { x: maxChildX, y: childHorizontalY }
-            ]
-          });
-
-          couple.children.forEach((childInfo) => {
-            const child = findPersonByName(childInfo.firstName, childInfo.lastName);
-            if (child) {
-              connections.push({
-                id: `couple-child-${connectionId++}`,
-                fromPersonId: 'couple-children-horizontal',
-                toPersonId: child.id,
-                type: 'family-line',
-                points: [
-                  { x: childInfo.x, y: childHorizontalY },
-                  { x: childInfo.x, y: childY - 35 }
-                ]
-              });
-            }
-          });
-        }
+        // 3. Vertical lines from horizontal line down to each child
+        couple.children.forEach((childInfo) => {
+          const child = findPersonByName(childInfo.firstName, childInfo.lastName);
+          if (child) {
+            connections.push({
+              id: `couple-child-${connectionId++}`,
+              fromPersonId: `couple-child-${child.id}`,
+              toPersonId: child.id,
+              type: 'family-line',
+              points: [
+                { x: childInfo.x, y: horizontalLineY },
+                { x: childInfo.x, y: childY - 35 }
+              ]
+            });
+          }
+        });
       }
     });
 
@@ -544,7 +496,7 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
             minWidth: '200%',
             minHeight: '200%'
           }}
-          viewBox="0 0 2000 1200"
+          viewBox="0 0 2200 1000"
         >
           {/* Render connections first (behind nodes) */}
           {connections.map(renderConnection)}
