@@ -118,10 +118,31 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
       }
     ];
 
+    // Define spouse couples separately positioned
+    const spouseCouples = [
+      {
+        spouse1: { firstName: 'Steven', lastName: 'Kuo', x: 50, y: 400 },
+        spouse2: { firstName: 'Patricia', lastName: 'Kuo', x: 200, y: 400 }
+      },
+      {
+        spouse1: { firstName: 'Rap', lastName: 'Sevilla', x: 400, y: 400 },
+        spouse2: { firstName: 'Alex', lastName: 'Sevilla', x: 550, y: 400 }
+      },
+      {
+        spouse1: { firstName: 'Toper', lastName: 'Porto', x: 750, y: 400 },
+        spouse2: { firstName: 'Angel', lastName: 'Porto', x: 900, y: 400 },
+        children: [
+          { firstName: 'Tala', lastName: 'Porto', x: 750, y: 550 },
+          { firstName: 'Alon', lastName: 'Porto', x: 900, y: 550 }
+        ]
+      }
+    ];
+
     const nodes: PersonNode[] = [];
     const connections: Connection[] = [];
     let connectionId = 0;
 
+    // Process main families
     families.forEach((family) => {
       // Add parents with fixed positions
       family.parents.forEach((parentInfo) => {
@@ -231,7 +252,122 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
       }
     });
 
-    // Add remaining people who don't fit in the main families
+    // Process spouse couples
+    spouseCouples.forEach((couple) => {
+      // Add spouses
+      const spouse1 = findPersonByName(couple.spouse1.firstName, couple.spouse1.lastName);
+      const spouse2 = findPersonByName(couple.spouse2.firstName, couple.spouse2.lastName);
+
+      if (spouse1) {
+        nodes.push({
+          ...spouse1,
+          position: { x: couple.spouse1.x, y: couple.spouse1.y },
+          generation: 1,
+          familyGroup: 'Spouse'
+        });
+      }
+
+      if (spouse2) {
+        nodes.push({
+          ...spouse2,
+          position: { x: couple.spouse2.x, y: couple.spouse2.y },
+          generation: 1,
+          familyGroup: 'Spouse'
+        });
+      }
+
+      // Create spouse connection
+      if (spouse1 && spouse2) {
+        connections.push({
+          id: `spouse-${connectionId++}`,
+          fromPersonId: spouse1.id,
+          toPersonId: spouse2.id,
+          type: 'spouse'
+        });
+      }
+
+      // Add children if they exist
+      if (couple.children) {
+        couple.children.forEach((childInfo) => {
+          const child = findPersonByName(childInfo.firstName, childInfo.lastName);
+          if (child) {
+            nodes.push({
+              ...child,
+              position: { x: childInfo.x, y: childInfo.y },
+              generation: 2,
+              familyGroup: 'Child'
+            });
+          }
+        });
+
+        // Create parent-child connections
+        const childIds = couple.children
+          .map(c => findPersonByName(c.firstName, c.lastName))
+          .filter(Boolean)
+          .map(c => c!.id);
+
+        if (childIds.length > 0) {
+          // Create horizontal line between children
+          const minChildX = Math.min(...couple.children.map(c => c.x));
+          const maxChildX = Math.max(...couple.children.map(c => c.x));
+          const childY = couple.children[0].y;
+          const horizontalLineY = childY - 50;
+          
+          connections.push({
+            id: `family-horizontal-${connectionId++}`,
+            fromPersonId: 'horizontal-line-couple',
+            toPersonId: 'horizontal-line-couple',
+            type: 'family-line',
+            points: [
+              { x: minChildX, y: horizontalLineY },
+              { x: maxChildX, y: horizontalLineY }
+            ]
+          });
+
+          // Connect children to horizontal line
+          childIds.forEach((childId, index) => {
+            const childX = couple.children![index].x;
+            connections.push({
+              id: `family-child-${connectionId++}`,
+              fromPersonId: 'horizontal-line-couple',
+              toPersonId: childId,
+              type: 'family-line',
+              points: [
+                { x: childX, y: horizontalLineY },
+                { x: childX, y: childY - 35 }
+              ]
+            });
+          });
+
+          // Connect parents to center of horizontal line
+          const centerX = (minChildX + maxChildX) / 2;
+          if (spouse1) {
+            connections.push({
+              id: `family-parent-${connectionId++}`,
+              fromPersonId: spouse1.id,
+              toPersonId: 'horizontal-line-couple',
+              type: 'family-line',
+              points: [
+                { x: centerX, y: horizontalLineY }
+              ]
+            });
+          }
+          if (spouse2) {
+            connections.push({
+              id: `family-parent-${connectionId++}`,
+              fromPersonId: spouse2.id,
+              toPersonId: 'horizontal-line-couple',
+              type: 'family-line',
+              points: [
+                { x: centerX, y: horizontalLineY }
+              ]
+            });
+          }
+        }
+      }
+    });
+
+    // Add remaining people who don't fit in the main families or spouse couples
     const assignedPeople = new Set(nodes.map(n => n.id));
     const remainingPeople = people.filter(p => !assignedPeople.has(p.id));
     
@@ -239,10 +375,10 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
       nodes.push({
         ...person,
         position: {
-          x: 200 + (index % 4) * 150,
+          x: 1200 + (index % 4) * 150,
           y: 400 + Math.floor(index / 4) * 150
         },
-        generation: 2,
+        generation: 3,
         familyGroup: 'Other'
       });
     });
@@ -306,7 +442,8 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
 
     if (connection.type === 'family-line' && connection.points && connection.points.length > 0) {
       // Handle different types of family line connections
-      if (connection.fromPersonId === 'horizontal-line' && connection.toPersonId === 'horizontal-line') {
+      if ((connection.fromPersonId === 'horizontal-line' && connection.toPersonId === 'horizontal-line') ||
+          (connection.fromPersonId === 'horizontal-line-couple' && connection.toPersonId === 'horizontal-line-couple')) {
         // Horizontal line between children
         const startPoint = connection.points[0];
         const endPoint = connection.points[1];
@@ -323,7 +460,7 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
         );
       }
 
-      if (connection.fromPersonId === 'horizontal-line' && toNode) {
+      if ((connection.fromPersonId === 'horizontal-line' || connection.fromPersonId === 'horizontal-line-couple') && toNode) {
         // Vertical line from horizontal line down to child
         const startPoint = connection.points[0];
         const endPoint = connection.points[1];
@@ -340,7 +477,7 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
         );
       }
 
-      if (connection.toPersonId === 'horizontal-line' && fromNode) {
+      if ((connection.toPersonId === 'horizontal-line' || connection.toPersonId === 'horizontal-line-couple') && fromNode) {
         // Vertical line from parent down to horizontal line
         const centerPoint = connection.points[0];
         return (
