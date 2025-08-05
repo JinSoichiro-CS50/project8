@@ -163,7 +163,7 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
         }
       }
 
-      // Create family connection lines - connect parents to a center point, then to children
+      // Create fork-style family connections for children
       const parentIds = family.parents
         .map(p => findPersonByName(p.firstName, p.lastName))
         .filter(Boolean)
@@ -174,27 +174,61 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
         .filter(Boolean)
         .map(c => c!.id);
 
-      // Connect each parent to family center
-      parentIds.forEach(parentId => {
-        connections.push({
-          id: `family-parent-${connectionId++}`,
-          fromPersonId: parentId,
-          toPersonId: 'center',
-          type: 'family-line',
-          points: [family.familyCenter]
-        });
-      });
+      if (parentIds.length > 0 && childIds.length > 0) {
+        // Calculate horizontal line position between children
+        const childPositions = family.children
+          .map(c => findPersonByName(c.firstName, c.lastName))
+          .filter(Boolean)
+          .map(c => ({ x: family.children.find(fc => fc.firstName === c!.firstName)!.x, y: family.children.find(fc => fc.firstName === c!.firstName)!.y }));
+        
+        if (childPositions.length > 0) {
+          const minChildX = Math.min(...childPositions.map(p => p.x));
+          const maxChildX = Math.max(...childPositions.map(p => p.x));
+          const childY = childPositions[0].y;
+          const horizontalLineY = childY - 50; // Horizontal line above children
+          
+          // Create horizontal line between children
+          connections.push({
+            id: `family-horizontal-${connectionId++}`,
+            fromPersonId: 'horizontal-line',
+            toPersonId: 'horizontal-line',
+            type: 'family-line',
+            points: [
+              { x: minChildX, y: horizontalLineY },
+              { x: maxChildX, y: horizontalLineY }
+            ]
+          });
 
-      // Connect family center to each child
-      childIds.forEach(childId => {
-        connections.push({
-          id: `family-child-${connectionId++}`,
-          fromPersonId: 'center',
-          toPersonId: childId,
-          type: 'family-line',
-          points: [family.familyCenter]
-        });
-      });
+          // Connect horizontal line to each child (vertical down)
+          childIds.forEach((childId, index) => {
+            const childX = childPositions[index].x;
+            connections.push({
+              id: `family-child-${connectionId++}`,
+              fromPersonId: 'horizontal-line',
+              toPersonId: childId,
+              type: 'family-line',
+              points: [
+                { x: childX, y: horizontalLineY },
+                { x: childX, y: childY - 35 }
+              ]
+            });
+          });
+
+          // Connect parents to center of horizontal line
+          const centerX = (minChildX + maxChildX) / 2;
+          parentIds.forEach(parentId => {
+            connections.push({
+              id: `family-parent-${connectionId++}`,
+              fromPersonId: parentId,
+              toPersonId: 'horizontal-line',
+              type: 'family-line',
+              points: [
+                { x: centerX, y: horizontalLineY }
+              ]
+            });
+          });
+        }
+      }
     });
 
     // Add remaining people who don't fit in the main families
@@ -256,7 +290,7 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
     const toNode = nodes.find(n => n.id === connection.toPersonId);
     
     if (connection.type === 'spouse' && fromNode && toNode) {
-      // Horizontal line for spouses
+      // Straight horizontal line for spouses
       return (
         <line
           key={connection.id}
@@ -271,25 +305,44 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
     }
 
     if (connection.type === 'family-line' && connection.points && connection.points.length > 0) {
-      const centerPoint = connection.points[0];
-      
-      if (connection.fromPersonId === 'center' && toNode) {
-        // Line from family center to child
+      // Handle different types of family line connections
+      if (connection.fromPersonId === 'horizontal-line' && connection.toPersonId === 'horizontal-line') {
+        // Horizontal line between children
+        const startPoint = connection.points[0];
+        const endPoint = connection.points[1];
         return (
           <line
             key={connection.id}
-            x1={centerPoint.x}
-            y1={centerPoint.y}
-            x2={toNode.position.x}
-            y2={toNode.position.y - 35}
+            x1={startPoint.x}
+            y1={startPoint.y}
+            x2={endPoint.x}
+            y2={endPoint.y}
             stroke="#f5f5dc"
             strokeWidth="3"
           />
         );
       }
 
-      if (connection.toPersonId === 'center' && fromNode) {
-        // Line from parent to family center
+      if (connection.fromPersonId === 'horizontal-line' && toNode) {
+        // Vertical line from horizontal line down to child
+        const startPoint = connection.points[0];
+        const endPoint = connection.points[1];
+        return (
+          <line
+            key={connection.id}
+            x1={startPoint.x}
+            y1={startPoint.y}
+            x2={endPoint.x}
+            y2={endPoint.y}
+            stroke="#f5f5dc"
+            strokeWidth="3"
+          />
+        );
+      }
+
+      if (connection.toPersonId === 'horizontal-line' && fromNode) {
+        // Vertical line from parent down to horizontal line
+        const centerPoint = connection.points[0];
         return (
           <line
             key={connection.id}
