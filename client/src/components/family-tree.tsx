@@ -1,10 +1,7 @@
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Person } from '@shared/schema';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiRequest } from '@/lib/queryClient';
-import { useToast } from '@/hooks/use-toast';
-import { Plus, Minus, Users, Upload } from 'lucide-react';
+import { Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const monthColors = {
@@ -29,7 +26,6 @@ interface Position {
 
 interface PersonNode extends Person {
   position: Position;
-  profilePicture?: string;
   generation: number;
   familyGroup: string;
 }
@@ -51,11 +47,9 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
   const [connections, setConnections] = useState<Connection[]>([]);
   const [draggedNode, setDraggedNode] = useState<string | null>(null);
   const [dragOffset, setDragOffset] = useState<Position>({ x: 0, y: 0 });
-  const [zoom, setZoom] = useState(1);
   const [pan, setPan] = useState<Position>({ x: 0, y: 0 });
   const [isPanning, setIsPanning] = useState(false);
   const [panStart, setPanStart] = useState<Position>({ x: 0, y: 0 });
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Initialize nodes with structured positions based on family relationships
   useEffect(() => {
@@ -221,12 +215,12 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
       const node = nodes.find(n => n.id === nodeId);
       if (node) {
         setDragOffset({
-          x: (e.clientX - rect.left) / zoom - pan.x - node.position.x,
-          y: (e.clientY - rect.top) / zoom - pan.y - node.position.y
+          x: (e.clientX - rect.left) - pan.x - node.position.x,
+          y: (e.clientY - rect.top) - pan.y - node.position.y
         });
       }
     }
-  }, [nodes, zoom, pan]);
+  }, [nodes, pan]);
 
   const handleCanvasMouseDown = useCallback((e: React.MouseEvent) => {
     if (e.target === svgRef.current) {
@@ -239,8 +233,8 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
     if (draggedNode) {
       const rect = svgRef.current?.getBoundingClientRect();
       if (rect) {
-        const newX = (e.clientX - rect.left) / zoom - pan.x - dragOffset.x;
-        const newY = (e.clientY - rect.top) / zoom - pan.y - dragOffset.y;
+        const newX = (e.clientX - rect.left) - pan.x - dragOffset.x;
+        const newY = (e.clientY - rect.top) - pan.y - dragOffset.y;
 
         setNodes(prev => prev.map(node => 
           node.id === draggedNode 
@@ -254,33 +248,12 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
         y: e.clientY - panStart.y
       });
     }
-  }, [draggedNode, dragOffset, zoom, pan, isPanning, panStart]);
+  }, [draggedNode, dragOffset, pan, isPanning, panStart]);
 
   const handleMouseUp = useCallback(() => {
     setDraggedNode(null);
     setIsPanning(false);
   }, []);
-
-  const handleWheel = useCallback((e: React.WheelEvent) => {
-    e.preventDefault();
-    const delta = e.deltaY > 0 ? 0.9 : 1.1;
-    setZoom(prev => Math.max(0.1, Math.min(3, prev * delta)));
-  }, []);
-
-  const [selectedPersonForUpload, setSelectedPersonForUpload] = useState<string | null>(null);
-
-  const handleProfilePictureUpload = (nodeId: string, file: File) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const dataUrl = e.target?.result as string;
-      setNodes(prev => prev.map(node => 
-        node.id === nodeId 
-          ? { ...node, profilePicture: dataUrl }
-          : node
-      ));
-    };
-    reader.readAsDataURL(file);
-  };
 
   const formatBirthday = (person: PersonNode) => {
     if (!person.month || !person.day) return '';
@@ -291,6 +264,10 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
   const getPersonBorderColor = (person: PersonNode) => {
     if (!person.month) return '#d1d5db';
     return monthColors[person.month as keyof typeof monthColors] || '#d1d5db';
+  };
+
+  const getInitials = (firstName: string) => {
+    return firstName.charAt(0).toUpperCase();
   };
 
   const renderConnection = (connection: Connection) => {
@@ -308,8 +285,8 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
           y1={fromNode.position.y}
           x2={toNode.position.x - 40}
           y2={toNode.position.y}
-          stroke="#94a3b8"
-          strokeWidth="2"
+          stroke="#f5f5dc"
+          strokeWidth="3"
           strokeDasharray="5,5"
         />
       );
@@ -323,24 +300,24 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
             y1={fromNode.position.y + 40}
             x2={fromNode.position.x}
             y2={midY}
-            stroke="#94a3b8"
-            strokeWidth="2"
+            stroke="#f5f5dc"
+            strokeWidth="3"
           />
           <line
             x1={fromNode.position.x}
             y1={midY}
             x2={toNode.position.x}
             y2={midY}
-            stroke="#94a3b8"
-            strokeWidth="2"
+            stroke="#f5f5dc"
+            strokeWidth="3"
           />
           <line
             x1={toNode.position.x}
             y1={midY}
             x2={toNode.position.x}
             y2={toNode.position.y - 40}
-            stroke="#94a3b8"
-            strokeWidth="2"
+            stroke="#f5f5dc"
+            strokeWidth="3"
           />
         </g>
       );
@@ -357,37 +334,30 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
         </div>
 
         <div className="flex gap-2 ml-auto">
-          <Button size="sm" variant="outline" onClick={() => setZoom(prev => Math.min(3, prev * 1.2))}>
-            <Plus className="h-4 w-4" />
-          </Button>
-          <Button size="sm" variant="outline" onClick={() => setZoom(prev => Math.max(0.1, prev * 0.8))}>
-            <Minus className="h-4 w-4" />
-          </Button>
-          <Button size="sm" variant="outline" onClick={() => { setZoom(1); setPan({ x: 0, y: 0 }); }}>
+          <Button size="sm" variant="outline" onClick={() => setPan({ x: 0, y: 0 })}>
             Reset View
           </Button>
         </div>
       </div>
 
       <div className="bg-gray-50 border-b border-gray-200 p-2 text-sm text-gray-700">
-        Drag people to move them around • Drag empty space to pan • Scroll to zoom • Use Reset View to center
+        Drag people to move them around • Drag empty space to pan • Use Reset View to center
       </div>
 
       {/* Family Tree Canvas */}
-      <div className="relative w-full h-[800px] overflow-hidden bg-gray-100">
+      <div className="relative w-full h-[800px] overflow-hidden bg-gray-800">
         <svg
           ref={svgRef}
           className={`w-full h-full ${isPanning ? 'cursor-grabbing' : 'cursor-grab'}`}
           onMouseDown={handleCanvasMouseDown}
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
-          onWheel={handleWheel}
           style={{ 
-            transform: `scale(${zoom}) translate(${pan.x}px, ${pan.y}px)`,
+            transform: `translate(${pan.x}px, ${pan.y}px)`,
             minWidth: '200%',
             minHeight: '200%'
           }}
-          viewBox={`${-pan.x / zoom} ${-pan.y / zoom} ${2000 / zoom} ${1200 / zoom}`}
+          viewBox="0 0 2000 1200"
         >
           {/* Render connections first (behind nodes) */}
           {connections.map(renderConnection)}
@@ -395,6 +365,8 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
           {/* Person Nodes */}
           {nodes.map(node => {
             const borderColor = getPersonBorderColor(node);
+            const initials = getInitials(node.firstName);
+            
             return (
               <g key={node.id}>
                 {/* Invisible interaction area */}
@@ -407,13 +379,6 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
                   className={`cursor-${draggedNode === node.id ? 'grabbing' : 'grab'}`}
                   onMouseDown={(e) => handleMouseDown(e, node.id)}
                 />
-                
-                {/* Profile Picture with colored border */}
-                <defs>
-                  <clipPath id={`clip-${node.id}`}>
-                    <circle cx={node.position.x} cy={node.position.y} r="30" />
-                  </clipPath>
-                </defs>
                 
                 {/* Colored border ring */}
                 <circle
@@ -436,50 +401,31 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
                   strokeWidth="2"
                 />
                 
-                {/* Profile Picture or placeholder */}
-                {node.profilePicture ? (
-                  <image
-                    x={node.position.x - 30}
-                    y={node.position.y - 30}
-                    width="60"
-                    height="60"
-                    href={node.profilePicture}
-                    clipPath={`url(#clip-${node.id})`}
-                    className="cursor-pointer"
-                    onClick={() => {
-                      setSelectedPersonForUpload(node.id);
-                      fileInputRef.current?.click();
-                    }}
-                  />
-                ) : (
-                  <>
-                    <circle
-                      cx={node.position.x}
-                      cy={node.position.y}
-                      r="30"
-                      fill="#f8f8f8"
-                      className="cursor-pointer hover:fill-gray-100"
-                      onClick={() => {
-                        setSelectedPersonForUpload(node.id);
-                        fileInputRef.current?.click();
-                      }}
-                    />
-                    <Upload
-                      x={node.position.x - 10}
-                      y={node.position.y - 10}
-                      width="20"
-                      height="20"
-                      className="fill-gray-400 pointer-events-none"
-                    />
-                  </>
-                )}
+                {/* Circle with initials */}
+                <circle
+                  cx={node.position.x}
+                  cy={node.position.y}
+                  r="30"
+                  fill="#f8f8f8"
+                />
+                
+                {/* First name initial */}
+                <text
+                  x={node.position.x}
+                  y={node.position.y + 8}
+                  textAnchor="middle"
+                  className="text-2xl font-bold fill-gray-800 pointer-events-none"
+                  style={{ fontSize: '24px' }}
+                >
+                  {initials}
+                </text>
 
                 {/* Name */}
                 <text
                   x={node.position.x}
                   y={node.position.y + 48}
                   textAnchor="middle"
-                  className="text-sm font-bold fill-gray-800 pointer-events-none"
+                  className="text-sm font-bold fill-white pointer-events-none"
                   style={{ fontSize: '12px' }}
                 >
                   {node.firstName}
@@ -488,7 +434,7 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
                   x={node.position.x}
                   y={node.position.y + 62}
                   textAnchor="middle"
-                  className="text-sm font-bold fill-gray-800 pointer-events-none"
+                  className="text-sm font-bold fill-white pointer-events-none"
                   style={{ fontSize: '12px' }}
                 >
                   {node.lastName}
@@ -499,7 +445,7 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
                   x={node.position.x}
                   y={node.position.y + 76}
                   textAnchor="middle"
-                  className="text-xs fill-gray-600 pointer-events-none"
+                  className="text-xs fill-gray-300 pointer-events-none"
                   style={{ fontSize: '10px' }}
                 >
                   {formatBirthday(node)}
@@ -508,21 +454,6 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
             );
           })}
         </svg>
-
-        {/* Hidden file input for profile pictures */}
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*"
-          className="hidden"
-          onChange={(e) => {
-            const file = e.target.files?.[0];
-            if (file && selectedPersonForUpload) {
-              handleProfilePictureUpload(selectedPersonForUpload, file);
-            }
-            e.target.value = ''; // Reset input
-          }}
-        />
       </div>
     </div>
   );
