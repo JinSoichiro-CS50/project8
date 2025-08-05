@@ -34,7 +34,8 @@ interface Connection {
   id: string;
   fromPersonId: string;
   toPersonId: string;
-  type: 'spouse' | 'parent-child';
+  type: 'spouse' | 'parent-child' | 'family-line';
+  points?: Position[];
 }
 
 interface FamilyTreeProps {
@@ -45,13 +46,11 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
   const svgRef = useRef<SVGSVGElement>(null);
   const [nodes, setNodes] = useState<PersonNode[]>([]);
   const [connections, setConnections] = useState<Connection[]>([]);
-  const [draggedNode, setDraggedNode] = useState<string | null>(null);
-  const [dragOffset, setDragOffset] = useState<Position>({ x: 0, y: 0 });
   const [pan, setPan] = useState<Position>({ x: 0, y: 0 });
   const [isPanning, setIsPanning] = useState(false);
   const [panStart, setPanStart] = useState<Position>({ x: 0, y: 0 });
 
-  // Initialize nodes with structured positions based on family relationships
+  // Initialize nodes with fixed positions based on family relationships
   useEffect(() => {
     const familyStructure = createFamilyStructure(people);
     setNodes(familyStructure.nodes);
@@ -63,58 +62,59 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
       return people.find(p => p.firstName === firstName && p.lastName === lastName);
     };
 
-    // Define family structure based on CSV data
+    // Define family structure with fixed positions
     const families = [
       {
         name: 'Sevilla',
         parents: [
-          { firstName: 'Robert', lastName: 'Sevilla' },
-          { firstName: 'Imelda', lastName: 'Sevilla' }
+          { firstName: 'Robert', lastName: 'Sevilla', x: 150, y: 100 },
+          { firstName: 'Imelda', lastName: 'Sevilla', x: 300, y: 100 }
         ],
         children: [
-          { firstName: 'Patricia', lastName: 'Kuo' },
-          { firstName: 'Rap', lastName: 'Sevilla' },
-          { firstName: 'Colleen', lastName: 'Sevilla' }
+          { firstName: 'Patricia', lastName: 'Kuo', x: 100, y: 250 },
+          { firstName: 'Rap', lastName: 'Sevilla', x: 225, y: 250 },
+          { firstName: 'Colleen', lastName: 'Sevilla', x: 350, y: 250 }
         ],
-        startX: 100
+        familyCenter: { x: 225, y: 175 }
       },
       {
         name: 'De Guzman',
         parents: [
-          { firstName: 'Egay', lastName: 'De Guzman' },
-          { firstName: 'Oyang', lastName: 'De Guzman' }
+          { firstName: 'Egay', lastName: 'De Guzman', x: 550, y: 100 },
+          { firstName: 'Oyang', lastName: 'De Guzman', x: 700, y: 100 }
         ],
         children: [
-          { firstName: 'Daniel', lastName: 'De Guzman' },
-          { firstName: 'Ryan', lastName: 'De Guzman' },
-          { firstName: 'Eric', lastName: 'De Guzman' },
-          { firstName: 'Nat', lastName: 'De Guzman' }
+          { firstName: 'Daniel', lastName: 'De Guzman', x: 500, y: 250 },
+          { firstName: 'Ryan', lastName: 'De Guzman', x: 600, y: 250 },
+          { firstName: 'Eric', lastName: 'De Guzman', x: 700, y: 250 },
+          { firstName: 'Nat', lastName: 'De Guzman', x: 800, y: 250 }
         ],
-        startX: 600
+        familyCenter: { x: 625, y: 175 }
       },
       {
         name: 'Tiongson',
         parents: [
-          { firstName: 'Nestor', lastName: 'Tiongson' },
-          { firstName: 'Ruby', lastName: 'Tiongson' }
+          { firstName: 'Nestor', lastName: 'Tiongson', x: 1000, y: 100 },
+          { firstName: 'Ruby', lastName: 'Tiongson', x: 1150, y: 100 }
         ],
         children: [
-          { firstName: 'Candice', lastName: 'Tiongson' },
-          { firstName: 'Caitlin', lastName: 'Tiongson' },
-          { firstName: 'Adrian', lastName: 'Tiongson' }
+          { firstName: 'Candice', lastName: 'Tiongson', x: 950, y: 250 },
+          { firstName: 'Caitlin', lastName: 'Tiongson', x: 1075, y: 250 },
+          { firstName: 'Adrian', lastName: 'Tiongson', x: 1200, y: 250 }
         ],
-        startX: 1100
+        familyCenter: { x: 1075, y: 175 }
       },
       {
-        name: 'Mejia',
+        name: 'Mejia-Porto',
         parents: [
-          { firstName: 'Aida', lastName: 'Mejia' }
+          { firstName: 'Aida', lastName: 'Mejia', x: 1400, y: 100 }
         ],
         children: [
-          { firstName: 'Mark', lastName: 'Mejia' },
-          { firstName: 'Michael', lastName: 'Mejia' }
+          { firstName: 'Mark', lastName: 'Mejia', x: 1300, y: 250 },
+          { firstName: 'Michael', lastName: 'Mejia', x: 1400, y: 250 },
+          { firstName: 'Angel', lastName: 'Porto', x: 1500, y: 250 }
         ],
-        startX: 1500
+        familyCenter: { x: 1400, y: 175 }
       }
     ];
 
@@ -122,28 +122,34 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
     const connections: Connection[] = [];
     let connectionId = 0;
 
-    families.forEach((family, familyIndex) => {
-      const baseY = 150;
-      const parentY = baseY;
-      const childY = baseY + 200;
-
-      // Add parents
-      family.parents.forEach((parentInfo, parentIndex) => {
+    families.forEach((family) => {
+      // Add parents with fixed positions
+      family.parents.forEach((parentInfo) => {
         const person = findPersonByName(parentInfo.firstName, parentInfo.lastName);
         if (person) {
           nodes.push({
             ...person,
-            position: {
-              x: family.startX + (parentIndex * 150),
-              y: parentY
-            },
+            position: { x: parentInfo.x, y: parentInfo.y },
             generation: 0,
             familyGroup: family.name
           });
         }
       });
 
-      // Add spouse connection if two parents
+      // Add children with fixed positions
+      family.children.forEach((childInfo) => {
+        const person = findPersonByName(childInfo.firstName, childInfo.lastName);
+        if (person) {
+          nodes.push({
+            ...person,
+            position: { x: childInfo.x, y: childInfo.y },
+            generation: 1,
+            familyGroup: family.name
+          });
+        }
+      });
+
+      // Create spouse connection if two parents
       if (family.parents.length === 2) {
         const parent1 = findPersonByName(family.parents[0].firstName, family.parents[0].lastName);
         const parent2 = findPersonByName(family.parents[1].firstName, family.parents[1].lastName);
@@ -157,33 +163,37 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
         }
       }
 
-      // Add children
-      family.children.forEach((childInfo, childIndex) => {
-        const person = findPersonByName(childInfo.firstName, childInfo.lastName);
-        if (person) {
-          nodes.push({
-            ...person,
-            position: {
-              x: family.startX + (childIndex * 120) - 50,
-              y: childY
-            },
-            generation: 1,
-            familyGroup: family.name
-          });
+      // Create family connection lines - connect parents to a center point, then to children
+      const parentIds = family.parents
+        .map(p => findPersonByName(p.firstName, p.lastName))
+        .filter(Boolean)
+        .map(p => p!.id);
 
-          // Connect children to parents
-          family.parents.forEach(parentInfo => {
-            const parent = findPersonByName(parentInfo.firstName, parentInfo.lastName);
-            if (parent) {
-              connections.push({
-                id: `parent-child-${connectionId++}`,
-                fromPersonId: parent.id,
-                toPersonId: person.id,
-                type: 'parent-child'
-              });
-            }
-          });
-        }
+      const childIds = family.children
+        .map(c => findPersonByName(c.firstName, c.lastName))
+        .filter(Boolean)
+        .map(c => c!.id);
+
+      // Connect each parent to family center
+      parentIds.forEach(parentId => {
+        connections.push({
+          id: `family-parent-${connectionId++}`,
+          fromPersonId: parentId,
+          toPersonId: 'center',
+          type: 'family-line',
+          points: [family.familyCenter]
+        });
+      });
+
+      // Connect family center to each child
+      childIds.forEach(childId => {
+        connections.push({
+          id: `family-child-${connectionId++}`,
+          fromPersonId: 'center',
+          toPersonId: childId,
+          type: 'family-line',
+          points: [family.familyCenter]
+        });
       });
     });
 
@@ -196,7 +206,7 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
         ...person,
         position: {
           x: 200 + (index % 4) * 150,
-          y: 450 + Math.floor(index / 4) * 150
+          y: 400 + Math.floor(index / 4) * 150
         },
         generation: 2,
         familyGroup: 'Other'
@@ -206,22 +216,6 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
     return { nodes, connections };
   };
 
-  const handleMouseDown = useCallback((e: React.MouseEvent, nodeId: string) => {
-    e.preventDefault();
-    
-    setDraggedNode(nodeId);
-    const rect = svgRef.current?.getBoundingClientRect();
-    if (rect) {
-      const node = nodes.find(n => n.id === nodeId);
-      if (node) {
-        setDragOffset({
-          x: (e.clientX - rect.left) - pan.x - node.position.x,
-          y: (e.clientY - rect.top) - pan.y - node.position.y
-        });
-      }
-    }
-  }, [nodes, pan]);
-
   const handleCanvasMouseDown = useCallback((e: React.MouseEvent) => {
     if (e.target === svgRef.current) {
       setIsPanning(true);
@@ -230,28 +224,15 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
   }, [pan]);
 
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    if (draggedNode) {
-      const rect = svgRef.current?.getBoundingClientRect();
-      if (rect) {
-        const newX = (e.clientX - rect.left) - pan.x - dragOffset.x;
-        const newY = (e.clientY - rect.top) - pan.y - dragOffset.y;
-
-        setNodes(prev => prev.map(node => 
-          node.id === draggedNode 
-            ? { ...node, position: { x: newX, y: newY } }
-            : node
-        ));
-      }
-    } else if (isPanning) {
+    if (isPanning) {
       setPan({
         x: e.clientX - panStart.x,
         y: e.clientY - panStart.y
       });
     }
-  }, [draggedNode, dragOffset, pan, isPanning, panStart]);
+  }, [isPanning, panStart]);
 
   const handleMouseUp = useCallback(() => {
-    setDraggedNode(null);
     setIsPanning(false);
   }, []);
 
@@ -274,54 +255,56 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
     const fromNode = nodes.find(n => n.id === connection.fromPersonId);
     const toNode = nodes.find(n => n.id === connection.toPersonId);
     
-    if (!fromNode || !toNode) return null;
-
-    if (connection.type === 'spouse') {
+    if (connection.type === 'spouse' && fromNode && toNode) {
       // Horizontal line for spouses
       return (
         <line
           key={connection.id}
-          x1={fromNode.position.x + 40}
+          x1={fromNode.position.x + 35}
           y1={fromNode.position.y}
-          x2={toNode.position.x - 40}
+          x2={toNode.position.x - 35}
           y2={toNode.position.y}
           stroke="#f5f5dc"
           strokeWidth="3"
-          strokeDasharray="5,5"
         />
       );
-    } else if (connection.type === 'parent-child') {
-      // L-shaped line for parent-child
-      const midY = fromNode.position.y + 50;
-      return (
-        <g key={connection.id}>
-          <line
-            x1={fromNode.position.x}
-            y1={fromNode.position.y + 40}
-            x2={fromNode.position.x}
-            y2={midY}
-            stroke="#f5f5dc"
-            strokeWidth="3"
-          />
-          <line
-            x1={fromNode.position.x}
-            y1={midY}
-            x2={toNode.position.x}
-            y2={midY}
-            stroke="#f5f5dc"
-            strokeWidth="3"
-          />
-          <line
-            x1={toNode.position.x}
-            y1={midY}
-            x2={toNode.position.x}
-            y2={toNode.position.y - 40}
-            stroke="#f5f5dc"
-            strokeWidth="3"
-          />
-        </g>
-      );
     }
+
+    if (connection.type === 'family-line' && connection.points && connection.points.length > 0) {
+      const centerPoint = connection.points[0];
+      
+      if (connection.fromPersonId === 'center' && toNode) {
+        // Line from family center to child
+        return (
+          <line
+            key={connection.id}
+            x1={centerPoint.x}
+            y1={centerPoint.y}
+            x2={toNode.position.x}
+            y2={toNode.position.y - 35}
+            stroke="#f5f5dc"
+            strokeWidth="3"
+          />
+        );
+      }
+
+      if (connection.toPersonId === 'center' && fromNode) {
+        // Line from parent to family center
+        return (
+          <line
+            key={connection.id}
+            x1={fromNode.position.x}
+            y1={fromNode.position.y + 35}
+            x2={centerPoint.x}
+            y2={centerPoint.y}
+            stroke="#f5f5dc"
+            strokeWidth="3"
+          />
+        );
+      }
+    }
+
+    return null;
   };
 
   return (
@@ -341,7 +324,7 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
       </div>
 
       <div className="bg-gray-50 border-b border-gray-200 p-2 text-sm text-gray-700">
-        Drag people to move them around • Drag empty space to pan • Use Reset View to center
+        Drag empty space to pan • Use Reset View to center
       </div>
 
       {/* Family Tree Canvas */}
@@ -369,17 +352,6 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
             
             return (
               <g key={node.id}>
-                {/* Invisible interaction area */}
-                <rect
-                  x={node.position.x - 50}
-                  y={node.position.y - 50}
-                  width="100"
-                  height="120"
-                  fill="transparent"
-                  className={`cursor-${draggedNode === node.id ? 'grabbing' : 'grab'}`}
-                  onMouseDown={(e) => handleMouseDown(e, node.id)}
-                />
-                
                 {/* Colored border ring */}
                 <circle
                   cx={node.position.x}
