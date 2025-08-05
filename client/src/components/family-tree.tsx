@@ -63,107 +63,107 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
       return people.find(p => p.firstName === firstName && p.lastName === lastName);
     };
 
-    // Define family structure with proper spacing to avoid overlaps
+    // Define family structure with improved spacing to avoid overlaps
     // Level 0: Grandparents generation (y: 100)
-    // Level 1: Parents generation (y: 350)
-    // Level 2: Children generation (y: 600)
+    // Level 1: Parents generation (y: 400)
+    // Level 2: Children generation (y: 700)
 
     const families = [
       {
         name: 'Sevilla',
         parents: [
-          { firstName: 'Robert', lastName: 'Sevilla', x: 200, y: 100 },
-          { firstName: 'Imelda', lastName: 'Sevilla', x: 350, y: 100 }
+          { firstName: 'Robert', lastName: 'Sevilla', x: 250, y: 100 },
+          { firstName: 'Imelda', lastName: 'Sevilla', x: 400, y: 100 }
         ],
         children: [
-          { firstName: 'Patricia', lastName: 'Kuo', x: 100, y: 350 },
-          { firstName: 'Rap', lastName: 'Sevilla', x: 275, y: 350 },
-          { firstName: 'Colleen', lastName: 'Sevilla', x: 450, y: 350 }
+          { firstName: 'Patricia', lastName: 'Kuo', x: 100, y: 400 },
+          { firstName: 'Rap', lastName: 'Sevilla', x: 325, y: 400 },
+          { firstName: 'Colleen', lastName: 'Sevilla', x: 550, y: 400 }
         ]
       },
       {
         name: 'De Guzman',
         parents: [
-          { firstName: 'Egay', lastName: 'De Guzman', x: 650, y: 100 },
-          { firstName: 'Oyang', lastName: 'De Guzman', x: 800, y: 100 }
+          { firstName: 'Egay', lastName: 'De Guzman', x: 800, y: 100 },
+          { firstName: 'Oyang', lastName: 'De Guzman', x: 950, y: 100 }
         ],
         children: [
-          { firstName: 'Daniel', lastName: 'De Guzman', x: 550, y: 350 },
-          { firstName: 'Ryan', lastName: 'De Guzman', x: 650, y: 350 },
-          { firstName: 'Eric', lastName: 'De Guzman', x: 750, y: 350 },
-          { firstName: 'Nat', lastName: 'De Guzman', x: 850, y: 350 }
+          { firstName: 'Daniel', lastName: 'De Guzman', x: 700, y: 400 },
+          { firstName: 'Ryan', lastName: 'De Guzman', x: 825, y: 400 },
+          { firstName: 'Eric', lastName: 'De Guzman', x: 950, y: 400 },
+          { firstName: 'Nat', lastName: 'De Guzman', x: 1075, y: 400 }
         ]
       },
       {
         name: 'Tiongson',
         parents: [
-          { firstName: 'Nestor', lastName: 'Tiongson', x: 1100, y: 100 },
-          { firstName: 'Ruby', lastName: 'Tiongson', x: 1250, y: 100 }
+          { firstName: 'Nestor', lastName: 'Tiongson', x: 1350, y: 100 },
+          { firstName: 'Ruby', lastName: 'Tiongson', x: 1500, y: 100 }
         ],
         children: [
-          { firstName: 'Candice', lastName: 'Tiongson', x: 1000, y: 350 },
-          { firstName: 'Caitlin', lastName: 'Tiongson', x: 1175, y: 350 },
-          { firstName: 'Adrian', lastName: 'Tiongson', x: 1350, y: 350 }
+          { firstName: 'Candice', lastName: 'Tiongson', x: 1225, y: 400 },
+          { firstName: 'Caitlin', lastName: 'Tiongson', x: 1425, y: 400 },
+          { firstName: 'Adrian', lastName: 'Tiongson', x: 1625, y: 400 }
         ]
       },
       {
         name: 'Mejia',
         parents: [
-          { firstName: 'Aida', lastName: 'Mejia', x: 1550, y: 100 }
+          { firstName: 'Aida', lastName: 'Mejia', x: 1900, y: 100 }
         ],
         children: [
-          { firstName: 'Boss', lastName: 'Mejia', x: 1450, y: 350 },
-          { firstName: 'Michael', lastName: 'Mejia', x: 1550, y: 350 },
-          { firstName: 'Angel', lastName: 'Porto', x: 1650, y: 350 },
-          { firstName: 'Mark', lastName: 'Mejia', x: 1750, y: 350 }
+          { firstName: 'Boss', lastName: 'Mejia', x: 1750, y: 400 },
+          { firstName: 'Michael', lastName: 'Mejia', x: 1875, y: 400 },
+          { firstName: 'Angel', lastName: 'Porto', x: 2000, y: 400 },
+          { firstName: 'Mark', lastName: 'Mejia', x: 2125, y: 400 }
         ]
       }
     ];
 
-    // Define married couples with proper spacing
+    // Define married couples with improved spacing
     const marriedCouples = [
       {
         name: 'Kuo',
         parents: [
-          { firstName: 'Steven', lastName: 'Kuo', x: 200, y: 350 },
-          { firstName: 'Patricia', lastName: 'Kuo', x: 100, y: 350 } // Reference to existing Patricia
+          { firstName: 'Steven', lastName: 'Kuo', x: 200, y: 400 },
+          { firstName: 'Patricia', lastName: 'Kuo', x: 100, y: 400 } // Reference to existing Patricia
         ],
         children: []
       },
       {
         name: 'Sevilla-Couple',
         parents: [
-          { firstName: 'Rap', lastName: 'Sevilla', x: 275, y: 350 }, // Reference to existing Rap
-          { firstName: 'Alex', lastName: 'Sevilla', x: 375, y: 350 }
+          { firstName: 'Rap', lastName: 'Sevilla', x: 325, y: 400 }, // Reference to existing Rap
+          { firstName: 'Alex', lastName: 'Sevilla', x: 450, y: 400 }
         ],
         children: []
       },
       {
         name: 'Porto',
         parents: [
-          { firstName: 'Toper', lastName: 'Porto', x: 1750, y: 350 },
-          { firstName: 'Angel', lastName: 'Porto', x: 1650, y: 350 } // Reference to existing Angel
+          { firstName: 'Toper', lastName: 'Porto', x: 2125, y: 400 },
+          { firstName: 'Angel', lastName: 'Porto', x: 2000, y: 400 } // Reference to existing Angel
         ],
         children: [
-          { firstName: 'Tala', lastName: 'Porto', x: 1650, y: 600 },
-          { firstName: 'Alon', lastName: 'Porto', x: 1750, y: 600 }
+          { firstName: 'Tala', lastName: 'Porto', x: 2000, y: 700 },
+          { firstName: 'Alon', lastName: 'Porto', x: 2125, y: 700 }
         ]
       },
       {
         name: 'De Guzman-Ryan',
         parents: [
-          { firstName: 'Ryan', lastName: 'De Guzman', x: 650, y: 350 }, // Reference to existing Ryan
-          { firstName: 'Sharmain', lastName: 'De Guzman', x: 750, y: 350 }
+          { firstName: 'Ryan', lastName: 'De Guzman', x: 825, y: 400 }, // Reference to existing Ryan
+          { firstName: 'Sharmain', lastName: 'De Guzman', x: 950, y: 400 }
         ],
         children: [
-          { firstName: 'Aiyan', lastName: 'De Guzman', x: 700, y: 600 }
+          { firstName: 'Aiyan', lastName: 'De Guzman', x: 887, y: 700 }
         ]
       },
       {
         name: 'De Guzman-Eric',
         parents: [
-          { firstName: 'Eric', lastName: 'De Guzman', x: 750, y: 350 }, // Reference to existing Eric
-          { firstName: 'Jackie', lastName: 'De Guzman', x: 850, y: 350 }
+          { firstName: 'Eric', lastName: 'De Guzman', x: 950, y: 400 }, // Reference to existing Eric
+          { firstName: 'Jackie', lastName: 'De Guzman', x: 1075, y: 400 }
         ],
         children: []
       }
@@ -229,10 +229,9 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
         const maxChildX = Math.max(...family.children.map(c => c.x));
         const childY = family.children[0].y;
 
-        const verticalLineY = parentY + 80; // Vertical line down from parents
-        const horizontalLineY = childY - 80; // Horizontal line above children
+        const horizontalLineY = parentY + 150; // Horizontal line between parents and children
 
-        // 1. Vertical line from parent center down
+        // 1. Vertical line from parent center down to horizontal line
         connections.push({
           id: `family-vertical-${connectionId++}`,
           fromPersonId: `vertical-${family.name}`,
@@ -328,9 +327,9 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
         const maxChildX = Math.max(...couple.children.map(c => c.x));
         const childY = couple.children[0].y;
 
-        const horizontalLineY = childY - 80; // Horizontal line above children
+        const horizontalLineY = parentY + 150; // Horizontal line between parents and children
 
-        // 1. Vertical line from parent center down
+        // 1. Vertical line from parent center down to horizontal line
         connections.push({
           id: `couple-vertical-${connectionId++}`,
           fromPersonId: `couple-vertical-${couple.name}`,
@@ -379,8 +378,8 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
       nodes.push({
         ...person,
         position: {
-          x: 200 + (index % 4) * 200,
-          y: 750 + Math.floor(index / 4) * 150
+          x: 200 + (index % 5) * 250,
+          y: 950 + Math.floor(index / 5) * 150
         },
         generation: 4,
         familyGroup: 'Other'
@@ -494,10 +493,10 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
           onMouseUp={handleMouseUp}
           style={{ 
             transform: `translate(${pan.x}px, ${pan.y}px)`,
-            minWidth: '200%',
-            minHeight: '200%'
+            minWidth: '250%',
+            minHeight: '250%'
           }}
-          viewBox="0 0 2200 1000"
+          viewBox="0 0 2500 1200"
         >
           {/* Render connections first (behind nodes) */}
           {connections.map(renderConnection)}
