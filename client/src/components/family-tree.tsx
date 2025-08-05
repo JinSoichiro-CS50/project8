@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Person } from '@shared/schema';
 import { Users } from 'lucide-react';
@@ -43,6 +42,8 @@ interface FamilyTreeProps {
 }
 
 export default function FamilyTree({ people }: FamilyTreeProps) {
+  // Include all people in the family tree, regardless of birthday information
+  const validPeople = people;
   const svgRef = useRef<SVGSVGElement>(null);
   const [nodes, setNodes] = useState<PersonNode[]>([]);
   const [connections, setConnections] = useState<Connection[]>([]);
@@ -66,7 +67,7 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
     // Level 0: Grandparents generation (y: 100)
     // Level 1: Parents generation (y: 350)
     // Level 2: Children generation (y: 600)
-    
+
     const families = [
       {
         name: 'Sevilla',
@@ -223,11 +224,11 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
           ? (family.parents[0].x + family.parents[1].x) / 2
           : family.parents[0].x;
         const parentY = family.parents[0].y;
-        
+
         const minChildX = Math.min(...family.children.map(c => c.x));
         const maxChildX = Math.max(...family.children.map(c => c.x));
         const childY = family.children[0].y;
-        
+
         const verticalLineY = parentY + 80; // Vertical line down from parents
         const horizontalLineY = childY - 80; // Horizontal line above children
 
@@ -322,11 +323,11 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
       if (couple.children.length > 0) {
         const parentCenterX = (couple.parents[0].x + couple.parents[1].x) / 2;
         const parentY = couple.parents[0].y;
-        
+
         const minChildX = Math.min(...couple.children.map(c => c.x));
         const maxChildX = Math.max(...couple.children.map(c => c.x));
         const childY = couple.children[0].y;
-        
+
         const horizontalLineY = childY - 80; // Horizontal line above children
 
         // 1. Vertical line from parent center down
@@ -428,7 +429,7 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
     if (connection.type === 'spouse') {
       const fromNode = nodes.find(n => n.id === connection.fromPersonId);
       const toNode = nodes.find(n => n.id === connection.toPersonId);
-      
+
       if (fromNode && toNode) {
         return (
           <line
@@ -446,7 +447,7 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
 
     if (connection.type === 'family-line' && connection.points && connection.points.length >= 2) {
       const points = connection.points;
-      
+
       return (
         <line
           key={connection.id}
@@ -505,7 +506,7 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
           {nodes.map(node => {
             const borderColor = getPersonBorderColor(node);
             const initials = getInitials(node.firstName);
-            
+
             return (
               <g key={node.id}>
                 {/* Colored border ring */}
@@ -518,7 +519,7 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
                   strokeWidth="4"
                   className="opacity-80"
                 />
-                
+
                 {/* Inner white ring */}
                 <circle
                   cx={node.position.x}
@@ -528,7 +529,7 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
                   stroke="white"
                   strokeWidth="2"
                 />
-                
+
                 {/* Circle with initials */}
                 <circle
                   cx={node.position.x}
@@ -536,7 +537,7 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
                   r="30"
                   fill="#f8f8f8"
                 />
-                
+
                 {/* First name initial */}
                 <text
                   x={node.position.x}
@@ -567,7 +568,7 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
                 >
                   {node.lastName}
                 </text>
-                
+
                 {/* Birthday */}
                 <text
                   x={node.position.x}
