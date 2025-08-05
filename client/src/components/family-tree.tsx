@@ -62,103 +62,108 @@ export default function FamilyTree({ people }: FamilyTreeProps) {
       return people.find(p => p.firstName === firstName && p.lastName === lastName);
     };
 
-    // Define family structure with better spacing and no duplicates
+    // Define family structure with proper hierarchical levels
+    // Level 0: Grandparents generation
+    // Level 1: Parents generation  
+    // Level 2: Children generation
+    // Level 3: Grandchildren generation
+    
     const families = [
       {
         name: 'Sevilla',
         parents: [
-          { firstName: 'Robert', lastName: 'Sevilla', x: 200, y: 100 },
-          { firstName: 'Imelda', lastName: 'Sevilla', x: 350, y: 100 }
+          { firstName: 'Robert', lastName: 'Sevilla', x: 150, y: 100 },
+          { firstName: 'Imelda', lastName: 'Sevilla', x: 300, y: 100 }
         ],
         children: [
-          { firstName: 'Patricia', lastName: 'Kuo', x: 100, y: 300 },
-          { firstName: 'Rap', lastName: 'Sevilla', x: 275, y: 300 },
-          { firstName: 'Colleen', lastName: 'Sevilla', x: 450, y: 300 }
+          { firstName: 'Patricia', lastName: 'Kuo', x: 50, y: 300 },
+          { firstName: 'Rap', lastName: 'Sevilla', x: 225, y: 300 },
+          { firstName: 'Colleen', lastName: 'Sevilla', x: 400, y: 300 }
         ]
       },
       {
         name: 'De Guzman',
         parents: [
-          { firstName: 'Egay', lastName: 'De Guzman', x: 650, y: 100 },
-          { firstName: 'Oyang', lastName: 'De Guzman', x: 800, y: 100 }
+          { firstName: 'Egay', lastName: 'De Guzman', x: 600, y: 100 },
+          { firstName: 'Oyang', lastName: 'De Guzman', x: 750, y: 100 }
         ],
         children: [
-          { firstName: 'Daniel', lastName: 'De Guzman', x: 550, y: 300 },
-          { firstName: 'Ryan', lastName: 'De Guzman', x: 650, y: 300 },
-          { firstName: 'Eric', lastName: 'De Guzman', x: 750, y: 300 },
-          { firstName: 'Nat', lastName: 'De Guzman', x: 850, y: 300 }
+          { firstName: 'Daniel', lastName: 'De Guzman', x: 500, y: 300 },
+          { firstName: 'Ryan', lastName: 'De Guzman', x: 600, y: 300 },
+          { firstName: 'Eric', lastName: 'De Guzman', x: 700, y: 300 },
+          { firstName: 'Nat', lastName: 'De Guzman', x: 800, y: 300 }
         ]
       },
       {
         name: 'Tiongson',
         parents: [
-          { firstName: 'Nestor', lastName: 'Tiongson', x: 1050, y: 100 },
-          { firstName: 'Ruby', lastName: 'Tiongson', x: 1200, y: 100 }
+          { firstName: 'Nestor', lastName: 'Tiongson', x: 1000, y: 100 },
+          { firstName: 'Ruby', lastName: 'Tiongson', x: 1150, y: 100 }
         ],
         children: [
-          { firstName: 'Candice', lastName: 'Tiongson', x: 1000, y: 300 },
-          { firstName: 'Caitlin', lastName: 'Tiongson', x: 1125, y: 300 },
-          { firstName: 'Adrian', lastName: 'Tiongson', x: 1250, y: 300 }
+          { firstName: 'Candice', lastName: 'Tiongson', x: 950, y: 300 },
+          { firstName: 'Caitlin', lastName: 'Tiongson', x: 1075, y: 300 },
+          { firstName: 'Adrian', lastName: 'Tiongson', x: 1200, y: 300 }
         ]
       },
       {
         name: 'Mejia',
         parents: [
-          { firstName: 'Aida', lastName: 'Mejia', x: 1450, y: 100 }
+          { firstName: 'Aida', lastName: 'Mejia', x: 1400, y: 100 }
         ],
         children: [
-          { firstName: 'Boss', lastName: 'Mejia', x: 1350, y: 300 },
-          { firstName: 'Michael', lastName: 'Mejia', x: 1450, y: 300 },
-          { firstName: 'Angel', lastName: 'Porto', x: 1550, y: 300 },
-          { firstName: 'Mark', lastName: 'Mejia', x: 1650, y: 300 }
+          { firstName: 'Boss', lastName: 'Mejia', x: 1300, y: 300 },
+          { firstName: 'Michael', lastName: 'Mejia', x: 1400, y: 300 },
+          { firstName: 'Angel', lastName: 'Porto', x: 1500, y: 300 },
+          { firstName: 'Mark', lastName: 'Mejia', x: 1600, y: 300 }
         ]
       }
     ];
 
-    // Define married couples with their own children (positioned separately to avoid duplicates)
+    // Define married couples at the same level (Level 1 - Parents generation)
     const marriedCouples = [
       {
         name: 'Kuo',
         parents: [
-          { firstName: 'Steven', lastName: 'Kuo', x: 100, y: 450 },
-          { firstName: 'Patricia', lastName: 'Kuo', x: 250, y: 450 } // Note: Patricia connects to both families
+          { firstName: 'Steven', lastName: 'Kuo', x: 50, y: 300 },  // Same level as Patricia
+          { firstName: 'Patricia', lastName: 'Kuo', x: 50, y: 300 } // Already positioned above
         ],
         children: []
       },
       {
         name: 'Sevilla-Couple',
         parents: [
-          { firstName: 'Rap', lastName: 'Sevilla', x: 400, y: 450 }, // Note: Rap connects to both families
-          { firstName: 'Alex', lastName: 'Sevilla', x: 550, y: 450 }
+          { firstName: 'Rap', lastName: 'Sevilla', x: 225, y: 300 }, // Already positioned above
+          { firstName: 'Alex', lastName: 'Sevilla', x: 375, y: 300 }  // Same level as Rap
         ],
         children: []
       },
       {
         name: 'Porto',
         parents: [
-          { firstName: 'Toper', lastName: 'Porto', x: 750, y: 450 },
-          { firstName: 'Angel', lastName: 'Porto', x: 900, y: 450 } // Note: Angel connects to both families
+          { firstName: 'Toper', lastName: 'Porto', x: 1650, y: 300 },
+          { firstName: 'Angel', lastName: 'Porto', x: 1500, y: 300 } // Already positioned above
         ],
         children: [
-          { firstName: 'Tala', lastName: 'Porto', x: 750, y: 600 },
-          { firstName: 'Alon', lastName: 'Porto', x: 900, y: 600 }
+          { firstName: 'Tala', lastName: 'Porto', x: 1550, y: 500 },
+          { firstName: 'Alon', lastName: 'Porto', x: 1650, y: 500 }
         ]
       },
       {
         name: 'De Guzman-Ryan',
         parents: [
-          { firstName: 'Ryan', lastName: 'De Guzman', x: 1100, y: 450 }, // Note: Ryan connects to both families
-          { firstName: 'Sharmain', lastName: 'De Guzman', x: 1250, y: 450 }
+          { firstName: 'Ryan', lastName: 'De Guzman', x: 600, y: 300 }, // Already positioned above
+          { firstName: 'Sharmain', lastName: 'De Guzman', x: 750, y: 300 }  // Same level as Ryan
         ],
         children: [
-          { firstName: 'Aiyan', lastName: 'De Guzman', x: 1175, y: 600 }
+          { firstName: 'Aiyan', lastName: 'De Guzman', x: 675, y: 500 }
         ]
       },
       {
         name: 'De Guzman-Eric',
         parents: [
-          { firstName: 'Eric', lastName: 'De Guzman', x: 1400, y: 450 }, // Note: Eric connects to both families
-          { firstName: 'Jackie', lastName: 'De Guzman', x: 1550, y: 450 }
+          { firstName: 'Eric', lastName: 'De Guzman', x: 700, y: 300 }, // Already positioned above
+          { firstName: 'Jackie', lastName: 'De Guzman', x: 850, y: 300 }  // Same level as Eric
         ],
         children: []
       }
