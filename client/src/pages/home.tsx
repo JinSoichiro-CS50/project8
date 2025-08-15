@@ -6,19 +6,15 @@ import BirthdayTimeline from "@/components/birthday-timeline";
 import BirthdayCard from "@/components/birthday-card";
 
 import StatsSection from "@/components/stats-section";
-import FamilyTree from "@/components/family-tree";
 import { downloadCSV } from "@/lib/csv-utils";
 import { getDaysUntilBirthday } from "@/lib/date-utils";
-import { Search, Plus, Download, Cake, Calendar, Users } from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Search, Plus, Download, Cake, Calendar } from "lucide-react";
 
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
   const [statsFilter, setStatsFilter] = useState<'today' | 'thisWeek' | 'next30Days' | 'all' | null>(null);
   
-  const [activeTab, setActiveTab] = useState("timeline");
-
   const { data: people = [], isLoading } = useQuery<Person[]>({
     queryKey: ["/api/people"],
   });
@@ -131,53 +127,32 @@ export default function Home() {
       {/* Stats Section */}
       <StatsSection people={validPeople} onFilterClick={handleStatsFilterClick} />
 
-      {/* Main Content Tabs */}
-      <section className="container mx-auto px-4 py-8">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-8">
-            <TabsTrigger value="timeline" className="flex items-center gap-2">
-              <Calendar className="h-4 w-4" />
-              Birthday Timeline
-            </TabsTrigger>
-            <TabsTrigger value="family-tree" className="flex items-center gap-2">
-              <Users className="h-4 w-4" />
-              Family Tree
-            </TabsTrigger>
-          </TabsList>
+      {/* Main Content */}
+      <section className="container mx-auto px-4 py-8 space-y-8">
+        {/* Timeline Section */}
+        <div className="bg-card border border-border rounded-xl p-8 shadow-sm">
+          <h2 className="text-2xl font-bold text-foreground text-center mb-8">Yearly Birthday Timeline</h2>
+          <BirthdayTimeline 
+            people={validPeople} 
+            onMonthClick={handleMonthClick}
+            selectedMonth={selectedMonth}
+          />
+        </div>
 
-          <TabsContent value="timeline" className="space-y-8">
-            {/* Timeline Section */}
-            <div className="bg-card border border-border rounded-xl p-8 shadow-sm">
-              <h2 className="text-2xl font-bold text-foreground text-center mb-8">Yearly Birthday Timeline</h2>
-              <BirthdayTimeline 
-                people={validPeople} 
-                onMonthClick={handleMonthClick}
-                selectedMonth={selectedMonth}
-              />
-            </div>
-
-            {/* Birthday Cards Section */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {sortedPeople.map(person => (
-                <BirthdayCard 
-                  key={person.id}
-                  person={person}
-                />
-              ))}
-            </div>
-            {filteredPeople.length === 0 && (
-              <div className="text-center text-muted-foreground text-xl py-12">
-                {searchTerm || selectedMonth ? 'No matching birthdays found' : 'No birthdays to display'}
-              </div>
-            )}
-          </TabsContent>
-
-          <TabsContent value="family-tree">
-            <div className="bg-card border border-border rounded-xl shadow-sm h-[700px]">
-              <FamilyTree people={validPeople} />
-            </div>
-          </TabsContent>
-        </Tabs>
+        {/* Birthday Cards Section */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {sortedPeople.map(person => (
+            <BirthdayCard 
+              key={person.id}
+              person={person}
+            />
+          ))}
+        </div>
+        {filteredPeople.length === 0 && (
+          <div className="text-center text-muted-foreground text-xl py-12">
+            {searchTerm || selectedMonth ? 'No matching birthdays found' : 'No birthdays to display'}
+          </div>
+        )}
       </section>
 
       
