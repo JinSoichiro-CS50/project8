@@ -51,6 +51,24 @@ export class MemStorage implements IStorage {
       { firstName: "Aiyan", lastName: "De Guzman", month: "May", day: 15, year: null },
       { firstName: "Sharmain", lastName: "De Guzman", month: "January", day: 1, year: null },
       { firstName: "Jackie", lastName: "De Guzman", month: "March", day: 22, year: null },
+      { firstName: "Gene", lastName: "Sendin", month: "July", day: 17, year: null },
+      { firstName: "Marissa", lastName: "Ongtao", month: "June", day: 28, year: null },
+      { firstName: "Larry", lastName: "Ongtao", month: "August", day: 4, year: null },
+      { firstName: "Muling", lastName: "Tiongson", month: "June", day: 1, year: null },
+      { firstName: "Bkim", lastName: "Maniquis", month: "July", day: 4, year: 1992 },
+      { firstName: "Ellen", lastName: "Ongtao", month: "May", day: 11, year: null },
+      { firstName: "Boy", lastName: "Ongtao", month: "January", day: 8, year: null },
+      { firstName: "Marla", lastName: "Ongtao", month: "December", day: 27, year: null },
+      { firstName: "Shannen", lastName: "Espinosa", month: "August", day: 28, year: null },
+      { firstName: "Kate", lastName: "Espinosa", month: "September", day: 15, year: null },
+      { firstName: "Gelo", lastName: "De Leon", month: "December", day: 13, year: null },
+      { firstName: "Fred", lastName: "Espinosa", month: "December", day: 13, year: null },
+      { firstName: "Net", lastName: "Espinosa", month: "December", day: 13, year: null },
+      { firstName: "Pia", lastName: "Espinosa", month: "September", day: 23, year: null },
+      { firstName: "Ralph", lastName: "Espinosa", month: "October", day: 24, year: null },
+      { firstName: "Andre", lastName: "Espinosa", month: "December", day: 18, year: null },
+      { firstName: "Jaymee", lastName: "Talag", month: "January", day: 19, year: null },
+      { firstName: "Nikkei", lastName: "Espinosa", month: "August", day: 18, year: null },
     ];
 
     initialPeople.forEach(person => {
@@ -132,6 +150,8 @@ export class MemStorage implements IStorage {
       { parent1: "Angel Porto", parent2: null, children: ["Tala Porto", "Alon Porto"] },
       // Ryan & Sharmain's children
       { parent1: "Ryan De Guzman", parent2: "Sharmain De Guzman", children: ["Aiyan De Guzman"] },
+      // Shannen's children
+      { parent1: "Shannen Espinosa", parent2: null, children: ["Pia Espinosa"] },
     ];
 
     parentChildConnections.forEach(family => {
