@@ -3,7 +3,7 @@ import { getDaysUntilBirthday } from "@/lib/date-utils";
 
 interface StatsSectionProps {
   people: Person[];
-  onFilterClick: (filterType: 'today' | 'thisWeek' | 'next30Days' | 'all') => void;
+  onFilterClick: (filterType: 'today' | 'next7Days' | 'next30Days' | 'all') => void;
 }
 
 export default function StatsSection({ people, onFilterClick }: StatsSectionProps) {
@@ -13,7 +13,7 @@ export default function StatsSection({ people, onFilterClick }: StatsSectionProp
     return days === 0;
   }).length;
 
-  const thisWeekCount = people.filter(person => {
+  const next7DaysCount = people.filter(person => {
     if (!person.month || !person.day) return false;
     const days = getDaysUntilBirthday(person.month, person.day);
     return days <= 7 && days >= 0;
@@ -37,10 +37,10 @@ export default function StatsSection({ people, onFilterClick }: StatsSectionProp
         </div>
         <div 
           className="bg-card border border-border rounded-xl p-6 text-center shadow-sm cursor-pointer hover:shadow-md transition-shadow"
-          onClick={() => onFilterClick('thisWeek')}
+          onClick={() => onFilterClick('next7Days')}
         >
-          <div className="text-3xl font-bold text-rose-600">{thisWeekCount}</div>
-          <div className="text-muted-foreground mt-1">This Week</div>
+          <div className="text-3xl font-bold text-rose-600">{next7DaysCount}</div>
+          <div className="text-muted-foreground mt-1">Next 7 Days</div>
         </div>
         <div 
           className="bg-card border border-border rounded-xl p-6 text-center shadow-sm cursor-pointer hover:shadow-md transition-shadow"

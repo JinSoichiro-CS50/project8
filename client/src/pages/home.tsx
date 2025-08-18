@@ -13,7 +13,7 @@ import { Search, Plus, Download, Cake, Calendar } from "lucide-react";
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
-  const [statsFilter, setStatsFilter] = useState<'today' | 'thisWeek' | 'next30Days' | 'all' | null>(null);
+  const [statsFilter, setStatsFilter] = useState<'today' | 'next7Days' | 'next30Days' | 'all' | null>(null);
   
   const { data: people = [], isLoading } = useQuery<Person[]>({
     queryKey: ["/api/people"],
@@ -34,7 +34,7 @@ export default function Home() {
         case 'today':
           matchesStatsFilter = days === 0;
           break;
-        case 'thisWeek':
+        case 'next7Days':
           matchesStatsFilter = days <= 7 && days >= 0;
           break;
         case 'next30Days':
@@ -74,7 +74,7 @@ export default function Home() {
     setStatsFilter(null); // Clear stats filter when month is selected
   };
 
-  const handleStatsFilterClick = (filterType: 'today' | 'thisWeek' | 'next30Days' | 'all') => {
+  const handleStatsFilterClick = (filterType: 'today' | 'next7Days' | 'next30Days' | 'all') => {
     setStatsFilter(statsFilter === filterType ? null : filterType);
     setSelectedMonth(null); // Clear month filter when stats filter is selected
   };
