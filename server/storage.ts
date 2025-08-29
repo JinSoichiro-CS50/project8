@@ -90,6 +90,7 @@ export class MemStorage implements IStorage {
       { firstName: "松庭 (Fred)", lastName: "傅", month: "February", day: 18, year: 1989 },
       { firstName: "胤成 (Jerry)", lastName: "黃", month: "February", day: 22, year: 1989 },
       { firstName: "棋評 (Nick)", lastName: "詹", month: "June", day: 15, year: 1989 },
+      { firstName: "攸淇 (Yuki)", lastName: "楊", month: "November", day: 14, year: 1989 },
     ];
 
     initialPeople.forEach(person => {
