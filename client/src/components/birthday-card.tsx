@@ -1,6 +1,7 @@
 import { Person } from "@shared/schema";
 import { getDaysUntilBirthday } from "@/lib/date-utils";
-import { Edit, Trash2 } from "lucide-react";
+import { formatDisplayName } from "@/lib/name-utils";
+import { Edit3, Trash2 } from "lucide-react";
 
 interface BirthdayCardProps {
   person: Person;
@@ -37,7 +38,7 @@ export default function BirthdayCard({ person, onEdit, onDelete }: BirthdayCardP
       <div className="flex justify-between items-start mb-3">
         <div>
           <h3 className="text-lg font-semibold text-foreground">
-            {person.firstName} {person.lastName}
+            {formatDisplayName(person.firstName, person.lastName)}
           </h3>
           <p className="text-muted-foreground text-sm">
             {person.month} {person.day} {ageText}
