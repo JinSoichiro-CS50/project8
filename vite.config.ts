@@ -7,7 +7,7 @@ import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
 // 用 async config 以便在 plugins 裡使用 await import(...)
 export default defineConfig(async () => ({
   // ★ 網址上的實際子路徑（非常重要）
-  base: "/project8/tools/birthday/",
+  base: "https://jinsoichiro-cs50.github.io/project8/tools/birthday/",
 
   plugins: [
     react(),
