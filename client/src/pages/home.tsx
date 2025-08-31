@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { ThemeToggle } from '@/components/theme-toggle';
+import { ThemeToggle } from '../components/theme-toggle';
 import type { Person } from '@shared/schema';
-import BirthdayTimeline from "@/components/birthday-timeline";
-import BirthdayCard from "@/components/birthday-card";
+import BirthdayTimeline from "../components/birthday-timeline";
+import BirthdayCard from "../components/birthday-card";
 
-import StatsSection from "@/components/stats-section";
-import { downloadCSV } from "@/lib/csv-utils";
-import { getDaysUntilBirthday } from "@/lib/date-utils";
+import StatsSection from "../components/stats-section";
+import { downloadCSV } from "../lib/csv-utils";
+import { getDaysUntilBirthday } from "../lib/date-utils";
 import { Search, Plus, Download, Cake, Calendar } from "lucide-react";
 
 export default function Home() {

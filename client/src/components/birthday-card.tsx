@@ -1,6 +1,6 @@
 import { Person } from "@shared/schema";
-import { getDaysUntilBirthday } from "@/lib/date-utils";
-import { formatDisplayName } from "@/lib/name-utils";
+import { getDaysUntilBirthday } from "../lib/date-utils";
+import { formatDisplayName } from "../lib/name-utils";
 import { Edit3, Trash2 } from "lucide-react";
 
 interface BirthdayCardProps {

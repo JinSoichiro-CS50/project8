@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Person } from '@shared/schema';
 import { Users } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Button } from './ui/button';
 
 const monthColors = {
   'January': '#FF8C42',      // Orange

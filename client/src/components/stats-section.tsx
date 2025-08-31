@@ -1,5 +1,5 @@
 import { Person } from "@shared/schema";
-import { getDaysUntilBirthday } from "@/lib/date-utils";
+import { getDaysUntilBirthday } from "../lib/date-utils";
 
 interface StatsSectionProps {
   people: Person[];
