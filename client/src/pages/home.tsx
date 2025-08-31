@@ -14,6 +14,8 @@ export default function Home() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
   const [statsFilter, setStatsFilter] = useState<'today' | 'next7Days' | 'next30Days' | 'all' | null>(null);
+  const [editingPerson, setEditingPerson] = useState<Person | null>(null);
+  const [isPersonModalOpen, setIsPersonModalOpen] = useState(false);
   
   const { data: people = [], isLoading } = useQuery<Person[]>({
     queryKey: ["/api/people"],
@@ -61,6 +63,16 @@ export default function Home() {
   const handleAddPerson = () => {
     setEditingPerson(null);
     setIsPersonModalOpen(true);
+  };
+
+  const handleEditPerson = (person: Person) => {
+    setEditingPerson(person);
+    setIsPersonModalOpen(true);
+  };
+
+  const handleDeletePerson = (person: Person) => {
+    // TODO: Implement delete functionality
+    console.log('Delete person:', person);
   };
 
   
@@ -145,6 +157,8 @@ export default function Home() {
             <BirthdayCard 
               key={person.id}
               person={person}
+              onEdit={handleEditPerson}
+              onDelete={handleDeletePerson}
             />
           ))}
         </div>
