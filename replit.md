@@ -8,6 +8,14 @@ This is a full-stack web application for managing birthdays and important dates.
 
 Preferred communication style: Simple, everyday language.
 
+## Recent Changes
+
+### August 31, 2025 - Bug Fixes
+- Fixed JSX syntax error in family-tree.tsx component (SVG element structure)
+- Removed missing tooltip import from App.tsx 
+- Created missing not-found page component
+- Application now runs successfully without build errors
+
 ## System Architecture
 
 The application follows a monorepo structure with clear separation between client, server, and shared code:
